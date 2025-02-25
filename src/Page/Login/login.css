@@ -1,0 +1,122 @@
+/* Fondo de la página */
+.login-background {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #6fa3ef, #1c7ed6);
+    position: relative;
+  }
+  
+  .login-background img {
+    position: absolute;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+    opacity: 0.1; /* Fondo difuso */
+  }
+  
+  /* Contenedor principal */
+  .login-container {
+    max-width: 450px;
+    width: 100%;
+    padding: 2rem;
+    border-radius: 12px;
+    background-color: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .login-container:hover {
+    transform: translateY(-5px); /* Sutil movimiento al pasar el ratón */
+  }
+  
+  /* Título */
+  .login-container h2 {
+    text-align: center;
+    color: #1c7ed6;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    font-size: 1.6rem;
+  }
+  
+  /* Mensaje de error */
+  .error {
+    color: red;
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 1rem;
+  }
+  
+  /* Campos de entrada */
+  .p-field {
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+  
+  .p-field label {
+    display: block;
+    font-size: 15px;
+    color: #555;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Estilo de los InputText */
+  .p-field .p-inputtext {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 15px;
+    transition: border-color 0.3s ease-in-out;
+  }
+  
+  .p-field .p-inputtext:focus {
+    border-color: #1c7ed6;
+  }
+  
+  /* Botón de mostrar/ocultar contraseña */
+  .p-field .p-button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: transparent;
+    border: none;
+    color: #1c7ed6;
+    font-size: 1rem;
+  }
+  
+  /* Estilo del botón de inicio de sesión */
+  .p-d-flex.p-jc-center {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .p-button-rounded {
+    background-color: #1c7ed6;
+    border-color: #1c7ed6;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  
+  /* Sombra sutil para los campos de texto */
+  .p-field .p-inputtext:focus {
+    box-shadow: 0 0 8px rgba(28, 126, 214, 0.4);
+  }
+  
+  /* Estilo general de los botones */
+  .p-button {
+    transition: all 0.3s ease;
+  }
+  
+  /* Animación de botones */
+  .p-button:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(28, 126, 214, 0.7);
+  }
+  

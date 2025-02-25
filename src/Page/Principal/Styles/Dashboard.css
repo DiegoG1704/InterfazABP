@@ -1,0 +1,31 @@
+.dashboard-container {
+    font-family: Arial, sans-serif;
+    background-color: #f4f7fa; /* Color de fondo */
+    padding: 0;
+    width: 100%;
+    height: 100vh; /* Ocupa todo el alto de la pantalla */
+  }
+  
+  .dashboard-content {
+    max-width: 1200px;
+    border-radius: 8px;
+    width: 100%;
+    padding: 20px;
+  }
+
+  .dashboard-table{
+    margin: 20px;
+  }
+  
+  .dashboard-content h1 {
+    font-size: 2rem;
+    color: #333;
+  }
+  
+  .dashboard-content p {
+    font-size: 1rem;
+    color: #666;
+    line-height: 1.5;
+  }
+  
+  
