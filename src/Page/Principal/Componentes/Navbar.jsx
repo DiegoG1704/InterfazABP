@@ -10,6 +10,11 @@ export default function Navbar({ setSearchTerm }) {
   const menuLeft = useRef(null);
   const navigate = useNavigate(); // Usar useNavigate para redirigir
 
+  const submit = () => {
+    // Eliminar el 'authToken' del localStorage
+    localStorage.removeItem('authToken');
+    navigate('/');
+  };
   const items = [
     {
       label: 'Opciones',
@@ -20,7 +25,7 @@ export default function Navbar({ setSearchTerm }) {
           // Redirigir al hacer clic en "Cerrar Sesion"
           command: () => {
             // Aquí puedes agregar cualquier lógica de cierre de sesión si es necesario
-            navigate('/');  // Redirigir a la página principal
+            submit();  // Redirigir a la página principal
           }
         },
       ]

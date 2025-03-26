@@ -32,9 +32,20 @@ export default function DialogTienda({ Visible, Close, Datos, SetDatos,Actualiza
       campo: field,
       valor: field === 'distritoId' ? Datos.distritoId : Datos[field], // Solo enviamos el 'id' si es 'distritoId'
     };
+
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      console.log("No se encontró token de autenticación.");
+      return;
+    }
   
     try {
-      const response = await axios.patch(`http://localhost:4000/editCampo/${Datos.id}`, campoYValor);
+      const response = await axios.patch(`http://localhost:3000/editCampo/${Datos.id}`, campoYValor,{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       console.log(response.data);
       setIsEditable((prev) => ({
         ...prev,
@@ -51,8 +62,18 @@ export default function DialogTienda({ Visible, Close, Datos, SetDatos,Actualiza
   const [distritos, setDistritos] = useState([]);
 
     const fetchDistritos = async () => {
+      const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      console.log("No se encontró token de autenticación.");
+      return;
+    }
         try {
-            const response = await axios.get('http://localhost:4000/distritos');
+            const response = await axios.get(`http://localhost:3000/distritos`,{
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
             setDistritos(response.data);
         } catch (error) {
             console.log('error', error);

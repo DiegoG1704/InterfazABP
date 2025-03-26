@@ -14,8 +14,18 @@ export default function DialogGrupo({Visible,Close,Actualizar}) {
     };
 
     const hadleSubmit =async()=>{
+        const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      console.log("No se encontró token de autenticación.");
+      return;
+    }
         try {
-            const response = await axios.post('http://localhost:4000/CreateGrupo',datos);
+            const response = await axios.post(`http://localhost:3000/CreateGrupo`,datos,{
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              });
             console.log(response);
             setDatos({
                 nombre:''

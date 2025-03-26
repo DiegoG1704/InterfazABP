@@ -1,17 +1,25 @@
 import Login from './Page/Login/login.jsx';
-import { Routes, Route, BrowserRouter } from 'react-router-dom'; // Importar BrowserRouter
+import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import Dashboard from './Page/Principal/Dashboard.jsx';
 import 'primeflex/primeflex.css';
+import PrivateRoute from './PrivateRoute.jsx';
 
 function App() {
   return (
     <div className="App">
-      {/* Envolver Routes con BrowserRouter */}
       <BrowserRouter>
         <Routes>
-          {/* Definir las rutas dentro de Routes */}
           <Route path="/" element={<Login />} />
-          <Route path='/Dashboard' element={<Dashboard/>} />
+          
+          {/* Ruta protegida */}
+          <Route 
+            path="/Dashboard" 
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            } 
+          />
         </Routes>
       </BrowserRouter>
     </div>

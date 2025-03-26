@@ -14,8 +14,18 @@ export default function DialogMetodo({Visible,Close,Actualizar}) {
     };
 
     const hadleSubmit =async()=>{
+        const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      console.log("No se encontró token de autenticación.");
+      return;
+    }
         try {
-            const response = await axios.post('http://localhost:4000/CreateMetodo',datos);
+            const response = await axios.post(`http://localhost:3000/CreateMetodo`,datos,{
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              });
             console.log(response);
             setDatos({
                 nombre:''

@@ -29,9 +29,19 @@ export default function DialogPersonal({ Visible, Close, Datos, Actualizar }) {
     };
 
     const handleAccept = async () => {
+        const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      console.log("No se encontró token de autenticación.");
+      return;
+    }
         try {
             // Enviamos los datos editados al servidor usando axios
-            const response = await axios.patch(`http://localhost:4000/editPersonal/${Datos?.id}`, datosP);
+            const response = await axios.patch(`http://localhost:3000/editPersonal/${Datos?.id}`, datosP,{
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              });
 
             // Llamamos a la función Actualizar para refrescar la vista
             Actualizar();

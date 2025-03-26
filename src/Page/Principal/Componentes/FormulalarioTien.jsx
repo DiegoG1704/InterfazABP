@@ -8,8 +8,18 @@ export default function FormulalarioTien({ Back, Next, datos, setDatos }) {
     const [distritos, setDistritos] = useState([]);
 
     const fetchDistritos = async () => {
+        const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      console.log("No se encontró token de autenticación.");
+      return;
+    }
         try {
-            const response = await axios.get('http://localhost:4000/distritos');
+            const response = await axios.get(`http://localhost:3000/distritos`,{
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              });
             setDistritos(response.data);
         } catch (error) {
             console.log('error', error);
@@ -27,8 +37,15 @@ export default function FormulalarioTien({ Back, Next, datos, setDatos }) {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setDatos({ ...datos, [name]: value });
+        
+        // Si el campo es 'ruc', convertimos el valor a un número
+        if (name === 'ruc') {
+            setDatos({ ...datos, [name]: Number(value) });
+        } else {
+            setDatos({ ...datos, [name]: value });
+        }
     };
+    
 
     const handleSubmit = () => {
         console.log('datos', datos);  // Solo el id del distrito será mostrado
@@ -49,15 +66,12 @@ export default function FormulalarioTien({ Back, Next, datos, setDatos }) {
         <div className='flex flex-column'>
             <div className='flex flex-column m-2'>
                 <strong>Ruc</strong>
-                <div className='flex w-full'>
-                    <InputText
-                        name='ruc'
-                        onChange={handleChange}
-                        value={datos.ruc}
-                        placeholder='Ingrese su ruc...'
-                    />
-                    <Button label='Completar' />
-                </div>
+                <InputText
+                    name='ruc'
+                    onChange={handleChange}
+                    value={datos.ruc}
+                    placeholder='Ingrese su ruc...'
+                />
             </div>
             <div className='flex flex-column m-2'>
                 <strong>Nombre de bodega</strong>

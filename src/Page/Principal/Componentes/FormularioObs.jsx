@@ -14,8 +14,18 @@ export default function FormularioObs({ Back, Close, datos, setDatos,Actualizar 
     const[metodo,setMetodo]=useState(false)
 
     const fetchMetodos = async () => {
+        const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      console.log("No se encontró token de autenticación.");
+      return;
+    }
         try {
-            const response = await axios.get('http://localhost:4000/getMetodo');
+            const response = await axios.get(`http://localhost:3000/getMetodo`,{
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              });
             setMetodos(response.data);
         } catch (error) {
             console.log('error', error);
@@ -23,8 +33,18 @@ export default function FormularioObs({ Back, Close, datos, setDatos,Actualizar 
     }
 
     const fetchDistritos = async () => {
+        const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      console.log("No se encontró token de autenticación.");
+      return;
+    }
         try {
-            const response = await axios.get('http://localhost:4000/getGrupos');
+            const response = await axios.get(`http://localhost:3000/getGrupos`,{
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              });
             setDistritos(response.data);
         } catch (error) {
             console.log('error', error);
@@ -52,11 +72,31 @@ export default function FormularioObs({ Back, Close, datos, setDatos,Actualizar 
         setDatos({ ...datos, [name]: value });
     };
 
-    const handleSubmit = async() => {
-        console.log('datos', datos);
+    const handleSubmit = async () => {
+        const token = localStorage.getItem("authToken");
+    
+        if (!token) {
+            console.log("No se encontró token de autenticación.");
+            return;
+        }
+    
         try {
-            const response = await axios.post('http://localhost:4000/CreateUsuario',datos)
+            // Asegúrate de convertir el RUC a número antes de enviarlo
+            const datosConRucComoNumero = {
+                ...datos,
+                ruc: Number(datos.ruc)  // Convertimos el RUC a número
+            };
+    
+            // Realizar el envío de los datos con el RUC convertido a número
+            const response = await axios.post(`http://localhost:3000/CreateUsuario`, datosConRucComoNumero, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+    
             console.log(response);
+    
+            // Limpiar los datos después de enviar
             setDatos({
                 dni: '',
                 nombre: '',
@@ -73,13 +113,15 @@ export default function FormularioObs({ Back, Close, datos, setDatos,Actualizar 
                 estadoGrupo: '',
                 observaciones: '',
             });
-            Close();
-            Actualizar();
+    
+            Close();  // Cierra el formulario o el modal (si lo estás usando)
+            Actualizar();  // Actualiza el estado o la vista
+    
         } catch (error) {
-            console.log('error',error);
+            console.log('error', error);
         }
-        
     };
+    
 
     return (
         <div className='flex flex-column'>

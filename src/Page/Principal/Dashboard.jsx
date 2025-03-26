@@ -21,6 +21,7 @@ export default function Dashboard() {
   const [observaciones, setObservaciones] = useState(false);
   const [fechas, setFechas] = useState(false);
   const [miembros, setMiembros] = useState([]);
+  const [cantidad, setCantidad] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [visibleConfirm, setVisibleConfirm] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
@@ -28,9 +29,38 @@ export default function Dashboard() {
   const [selectedSuspendMember, setSelectedSuspendMember] = useState(null);
 
 
-  const fetchMiembros = async () => {
+  const fetchMiembrosCount = async () => {
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      console.log("No se encontró token de autenticación.");
+      return;
+    }
     try {
-      const response = await axios.get('http://localhost:4000/List');
+      const response = await axios.get(`http://localhost:3000/afiliadosCount`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setCantidad(response.data);
+    } catch (error) {
+      console.log('Error al obtener miembros:', error);
+    }
+  };
+
+  const fetchMiembros = async () => {
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      console.log("No se encontró token de autenticación.");
+      return;
+    }
+    try {
+      const response = await axios.get(`http://localhost:3000/List`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setMiembros(response.data);
     } catch (error) {
       console.log('Error al obtener miembros:', error);
@@ -38,9 +68,14 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    fetchMiembros(); // Solo se ejecutará cuando el componente se monte
-  }, []);  // Asegúrate de que las dependencias estén vacías
+    fetchMiembros(); // Solo se ejecutará si hay un token
+    fetchMiembrosCount();
+  }, []); // El segundo useEffect solo se ejecuta una vez
   
+  const Actualizar = () => {
+    fetchMiembros();
+    fetchMiembrosCount();
+  };
 
   const openConfirmDialog = (rowData) => {
     setSelectedMember(rowData); // Guarda el miembro seleccionado
@@ -54,10 +89,21 @@ export default function Dashboard() {
 
   const handleSuspender = async () => {
     if (!selectedSuspendMember) return;
-  
+
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      console.log("No se encontró token de autenticación.");
+      return;
+    }
     try {
-      await axios.patch(`http://localhost:4000/Suspender/${selectedSuspendMember.id}`);
-      fetchMiembros(); // Refrescar la lista después de la actualización
+      await axios.patch(`http://localhost:3000/Suspender/${selectedSuspendMember.id}`,{},  // El cuerpo de la solicitud está vacío, ya que solo queremos hacer una acción de confirmación
+        {
+            headers: {
+                Authorization: `Bearer ${token}`, // Asegúrate de pasar el token correctamente en los headers
+            },
+        });
+        Actualizar(); // Refrescar la lista después de la actualización
     } catch (error) {
       console.error('Error al suspender:', error);
     } finally {
@@ -68,10 +114,19 @@ export default function Dashboard() {
 
   const handleReiniciar = async () => {
     if (!selectedMember) return;
-  
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      console.log("No se encontró token de autenticación.");
+      return;
+    }
     try {
-      await axios.patch(`http://localhost:4000/Reiniciar/${selectedMember.id}`);
-      fetchMiembros(); // Refrescar la lista después de la actualización
+      await axios.patch(`http://localhost:3000/Reiniciar/${selectedMember.id}`,{},{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      Actualizar(); // Refrescar la lista después de la actualización
     } catch (error) {
       console.error('Error al reiniciar:', error);
     } finally {
@@ -114,6 +169,7 @@ export default function Dashboard() {
       />
     );
   };
+  
 
 
   const ButtonHerram = (rowData) => {
@@ -191,6 +247,10 @@ export default function Dashboard() {
       <Navbar setSearchTerm={setSearchTerm} />
       <div className="dashboard-content">
         <h1>Bienvenido a la Interfaz de Usuario de ABP</h1>
+        <div className='cantidad'>
+          <span>Activos:{cantidad?.activos}</span>
+          <span>Suspendidos:{cantidad?.suspendidos}</span>
+        </div>
       </div>
       <div style={{ display: 'flex', justifyContent:'space-between', margin: '20px' }}>
       <ExportExcel data={miembros} /> {/* Agregar el componente ExportExcel */}
@@ -215,7 +275,7 @@ export default function Dashboard() {
           <Column body={ButtonHerram} header="Herramientas"></Column>
         </DataTable>
       </div>
-      <DialogAgregar Visible={agregar} Close={() => setAgregar(false)} Actualizar={fetchMiembros} />
+      <DialogAgregar Visible={agregar} Close={() => setAgregar(false)} Actualizar={Actualizar} />
       <DialogTienda Visible={tienda} Close={() => setTienda(false)} Datos={select} SetDatos={setSelect} Actualizar={fetchMiembros} />
       <DialogFechas Visible={fechas} Close={() => setFechas(false)} Datos={select} />
       <DialogObservaciones Visible={observaciones} Close={() => setObservaciones(false)} Datos={select} SetDatos={setSelect} Actualizar={fetchMiembros} />

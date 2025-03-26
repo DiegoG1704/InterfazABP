@@ -10,15 +10,36 @@ export default function DialogFechas({ Visible, Close, Datos }) {
   const toast = useRef(null);
 
   const accept = async () => {
-    try {
-      const response = await axios.post(`http://localhost:4000/PostPago/${Datos?.id}`);
-      console.log(response);
-      fetchFecha();
-      toast.current.show({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
-    } catch (error) {
-      console.log('error', error);
+    const token = localStorage.getItem("authToken");  // Obtener el token desde localStorage
+
+    if (!token) {
+        console.log("No se encontró token de autenticación.");
+        return;
     }
-  };
+
+    try {
+        // Enviar el token en los headers
+        const response = await axios.post(
+            `http://localhost:3000/PostPago/${Datos?.id}`, // URL del endpoint
+            {},  // El cuerpo de la solicitud está vacío, ya que solo queremos hacer una acción de confirmación
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`, // Asegúrate de pasar el token correctamente en los headers
+                },
+            }
+        );
+
+        console.log(response);
+        fetchFecha(); // Recargar la información
+        toast.current.show({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
+    } catch (error) {
+        console.log('error', error);
+        if (error.response && error.response.status === 401) {
+            toast.current.show({ severity: 'error', summary: 'Unauthorized', detail: 'Token no proporcionado o inválido.', life: 3000 });
+        }
+    }
+};
+
 
   const reject = () => {
     Close()
@@ -44,8 +65,18 @@ export default function DialogFechas({ Visible, Close, Datos }) {
   }, [Visible, Datos]);
 
   const fetchFecha = async () => {
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      console.log("No se encontró token de autenticación.");
+      return;
+    }
     try {
-      const response = await axios.get(`http://localhost:4000/getFechPago/${Datos?.id}`);
+      const response = await axios.get(`http://localhost:3000/getFechPago/${Datos?.id}`,{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (response.status === 200) {
         const { pagos, ultimoAño } = response.data;
         
@@ -91,7 +122,7 @@ export default function DialogFechas({ Visible, Close, Datos }) {
             onClick={confirm1}
             style={{ background: 'white', color: '#267aad', borderColor: '#267aad' }}
             label={fecha.ultimoAño || "No disponible"}
-            disabled={fecha.isNextYearDisabled} // Deshabilitar el botón si la fecha es menor que un mes antes del próximo pago
+            // disabled={fecha.isNextYearDisabled} // Deshabilitar el botón si la fecha es menor que un mes antes del próximo pago
           />
         </div>
         <div className="flex flex-column">

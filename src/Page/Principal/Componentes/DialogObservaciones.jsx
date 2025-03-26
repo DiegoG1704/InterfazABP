@@ -26,8 +26,18 @@ export default function DialogObservaciones({Visible,Close,Datos,SetDatos,Actual
     const [Metodos, setMetodos] = useState([]);
 
     const fetchMetodos = async () => {
+      const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      console.log("No se encontró token de autenticación.");
+      return;
+    }
         try {
-            const response = await axios.get('http://localhost:4000/getMetodo');
+            const response = await axios.get(`http://localhost:3000/getMetodo`,{
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
             setMetodos(response.data);
         } catch (error) {
             console.log('error', error);
@@ -35,8 +45,18 @@ export default function DialogObservaciones({Visible,Close,Datos,SetDatos,Actual
     }
 
     const fetchDistritos = async () => {
+      const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      console.log("No se encontró token de autenticación.");
+      return;
+    }
         try {
-            const response = await axios.get('http://localhost:4000/getGrupos');
+            const response = await axios.get(`http://localhost:3000/getGrupos`,{
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
             setDistritos(response.data);
         } catch (error) {
             console.log('error', error);
@@ -77,9 +97,20 @@ export default function DialogObservaciones({Visible,Close,Datos,SetDatos,Actual
         valor: field === 'estadoGrupo' ? Datos.estadoGrupo : 
               field === 'metodoAfiliacion' ? Datos.metodoAfiliacion : Datos[field], 
       };
+
+      const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      console.log("No se encontró token de autenticación.");
+      return;
+    }
     
       try {
-        const response = await axios.patch(`http://localhost:4000/editCampo/${Datos.id}`, campoYValor);
+        const response = await axios.patch(`http://localhost:3000/editCampo/${Datos.id}`, campoYValor,{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         console.log(response.data);
         setIsEditable((prev) => ({
           ...prev,
