@@ -3,23 +3,27 @@ import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import React, { useEffect, useState } from 'react';
+import Cookies from "js-cookie";
 
 export default function FormulalarioTien({ Back, Next, datos, setDatos }) {
     const [distritos, setDistritos] = useState([]);
 
     const fetchDistritos = async () => {
-        const token = localStorage.getItem("authToken");
-
-    if (!token) {
-      console.log("No se encontró token de autenticación.");
-      return;
-    }
+        const token = Cookies.get("accessToken")
+    
+        if (!token) {
+            console.log("No se encontró un token, el usuario no está autenticado.");
+            return;
+        }
         try {
             const response = await axios.get(`http://localhost:3000/distritos`,{
                 headers: {
-                  Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${token}`,
                 },
-              });
+                withCredentials: true,  // Si el backend usa cookies de autenticación
+            });
+            console.log('datos',response.data);
+            
             setDistritos(response.data);
         } catch (error) {
             console.log('error', error);

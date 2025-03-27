@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import DialogGrupo from './DialogGrupo';
 import DialogMetodo from './DialogMetodo';
+import Cookies from "js-cookie";
 
 export default function FormularioObs({ Back, Close, datos, setDatos,Actualizar }) {
 
@@ -14,18 +15,19 @@ export default function FormularioObs({ Back, Close, datos, setDatos,Actualizar 
     const[metodo,setMetodo]=useState(false)
 
     const fetchMetodos = async () => {
-        const token = localStorage.getItem("authToken");
-
+    const token = Cookies.get("accessToken")
+    
     if (!token) {
-      console.log("No se encontró token de autenticación.");
-      return;
+        console.log("No se encontró un token, el usuario no está autenticado.");
+        return;
     }
         try {
             const response = await axios.get(`http://localhost:3000/getMetodo`,{
                 headers: {
-                  Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${token}`,
                 },
-              });
+                withCredentials: true,  // Si el backend usa cookies de autenticación
+            });
             setMetodos(response.data);
         } catch (error) {
             console.log('error', error);
@@ -33,18 +35,19 @@ export default function FormularioObs({ Back, Close, datos, setDatos,Actualizar 
     }
 
     const fetchDistritos = async () => {
-        const token = localStorage.getItem("authToken");
-
-    if (!token) {
-      console.log("No se encontró token de autenticación.");
-      return;
-    }
+        const token = Cookies.get("accessToken")
+    
+        if (!token) {
+            console.log("No se encontró un token, el usuario no está autenticado.");
+            return;
+        }
         try {
             const response = await axios.get(`http://localhost:3000/getGrupos`,{
                 headers: {
-                  Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${token}`,
                 },
-              });
+                withCredentials: true,  // Si el backend usa cookies de autenticación
+            });
             setDistritos(response.data);
         } catch (error) {
             console.log('error', error);
@@ -73,12 +76,12 @@ export default function FormularioObs({ Back, Close, datos, setDatos,Actualizar 
     };
 
     const handleSubmit = async () => {
-        const token = localStorage.getItem("authToken");
+        const token = Cookies.get("accessToken")
     
-        if (!token) {
-            console.log("No se encontró token de autenticación.");
-            return;
-        }
+    if (!token) {
+        console.log("No se encontró un token, el usuario no está autenticado.");
+        return;
+    }
     
         try {
             // Asegúrate de convertir el RUC a número antes de enviarlo
@@ -92,6 +95,7 @@ export default function FormularioObs({ Back, Close, datos, setDatos,Actualizar 
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
+                withCredentials: true,  // Si el backend usa cookies de autenticación
             });
     
             console.log(response);

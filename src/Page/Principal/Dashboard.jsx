@@ -12,6 +12,7 @@ import DialogFechas from './Componentes/DialogFechas';
 import DialogObservaciones from './Componentes/DialogObservaciones';
 import DialogPersonal from './Componentes/DialogPersonal';
 import ExportExcel from './Componentes/ExportExcel';
+import Cookies from "js-cookie";
 
 export default function Dashboard() {
   const [select, setSelect] = useState([]);
@@ -30,18 +31,20 @@ export default function Dashboard() {
 
 
   const fetchMiembrosCount = async () => {
-    const token = localStorage.getItem("authToken");
-
+    const token = Cookies.get("accessToken")
+    console.log('tok',token);
+    
     if (!token) {
-      console.log("No se encontró token de autenticación.");
+      console.log("No se encontró un token, el usuario no está autenticado.");
       return;
-    }
+  }
     try {
-      const response = await axios.get(`http://localhost:3000/afiliadosCount`, {
+      const response = await axios.get(`http://localhost:3000/afiliadosCount`,  {
         headers: {
-          Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
         },
-      });
+        withCredentials: true,  // Si el backend usa cookies de autenticación
+    });
       setCantidad(response.data);
     } catch (error) {
       console.log('Error al obtener miembros:', error);
@@ -49,23 +52,29 @@ export default function Dashboard() {
   };
 
   const fetchMiembros = async () => {
-    const token = localStorage.getItem("authToken");
-
-    if (!token) {
-      console.log("No se encontró token de autenticación.");
-      return;
-    }
     try {
-      const response = await axios.get(`http://localhost:3000/List`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setMiembros(response.data);
+        const response = await axios.get("http://localhost:3000/List", {
+            withCredentials: true, // 🔥 Esto enviará la cookie automáticamente
+        });
+
+        console.log("Datos:", response.data);
+        setMiembros(response.data);
     } catch (error) {
-      console.log('Error al obtener miembros:', error);
+        if (error.response) {
+            if (error.response.status === 401) {
+                console.log("Error 401: No autorizado, el token puede haber expirado.");
+            } else if (error.response.status === 403) {
+                console.log("Error 403: Acceso denegado, permisos insuficientes.");
+            } else {
+                console.log(`Error ${error.response.status}:`, error.response.data);
+            }
+        } else {
+            console.log("Error de red o de servidor:", error.message);
+        }
     }
-  };
+};
+
+
 
   useEffect(() => {
     fetchMiembros(); // Solo se ejecutará si hay un token
@@ -90,12 +99,9 @@ export default function Dashboard() {
   const handleSuspender = async () => {
     if (!selectedSuspendMember) return;
 
-    const token = localStorage.getItem("authToken");
+    const token = Cookies.get("accessToken")
+    
 
-    if (!token) {
-      console.log("No se encontró token de autenticación.");
-      return;
-    }
     try {
       await axios.patch(`http://localhost:3000/Suspender/${selectedSuspendMember.id}`,{},  // El cuerpo de la solicitud está vacío, ya que solo queremos hacer una acción de confirmación
         {
@@ -114,12 +120,8 @@ export default function Dashboard() {
 
   const handleReiniciar = async () => {
     if (!selectedMember) return;
-    const token = localStorage.getItem("authToken");
+    const token = Cookies.get("accessToken")
 
-    if (!token) {
-      console.log("No se encontró token de autenticación.");
-      return;
-    }
     try {
       await axios.patch(`http://localhost:3000/Reiniciar/${selectedMember.id}`,{},{
         headers: {
