@@ -33,7 +33,7 @@ export default function DialogObservaciones({Visible,Close,Datos,SetDatos,Actual
       return;
     }
         try {
-            const response = await axios.get(`http://localhost:3000/getMetodo`,{
+            const response = await axios.get(`https://backendabp.massalud.org.pe/getMetodo`,{
               headers: {
                 Authorization: `Bearer ${token}`,
               },
@@ -52,7 +52,7 @@ export default function DialogObservaciones({Visible,Close,Datos,SetDatos,Actual
       return;
     }
         try {
-            const response = await axios.get(`http://localhost:3000/getGrupos`,{
+            const response = await axios.get(`https://backendabp.massalud.org.pe/getGrupos`,{
               headers: {
                 Authorization: `Bearer ${token}`,
               },
@@ -106,7 +106,7 @@ export default function DialogObservaciones({Visible,Close,Datos,SetDatos,Actual
     }
     
       try {
-        const response = await axios.patch(`http://localhost:3000/editCampo/${Datos.id}`, campoYValor,{
+        const response = await axios.patch(`https://backendabp.massalud.org.pe/editCampo/${Datos.id}`, campoYValor,{
           headers: {
             Authorization: `Bearer ${token}`,
           },

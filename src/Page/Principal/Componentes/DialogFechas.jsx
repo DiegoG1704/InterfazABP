@@ -5,7 +5,7 @@ import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import React, { useState, useEffect, useRef } from 'react';
 import { Toast } from 'primereact/toast';
 
-export default function DialogFechas({ Visible, Close, Datos }) {
+export default function DialogFechas({ Visible, Close, Datos,Actualizar }) {
   const [fecha, setFecha] = useState({ pagos: [], ultimoAño: "", isNextYearDisabled: false }); // Agregar isNextYearDisabled al estado
   const toast = useRef(null);
 
@@ -20,7 +20,7 @@ export default function DialogFechas({ Visible, Close, Datos }) {
     try {
         // Enviar el token en los headers
         const response = await axios.post(
-            `http://localhost:3000/PostPago/${Datos?.id}`, // URL del endpoint
+            `https://backendabp.massalud.org.pe/PostPago/${Datos?.id}`, // URL del endpoint
             {},  // El cuerpo de la solicitud está vacío, ya que solo queremos hacer una acción de confirmación
             {
                 headers: {
@@ -31,6 +31,7 @@ export default function DialogFechas({ Visible, Close, Datos }) {
 
         console.log(response);
         fetchFecha(); // Recargar la información
+        Actualizar();
         toast.current.show({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
     } catch (error) {
         console.log('error', error);
@@ -72,7 +73,7 @@ export default function DialogFechas({ Visible, Close, Datos }) {
       return;
     }
     try {
-      const response = await axios.get(`http://localhost:3000/getFechPago/${Datos?.id}`,{
+      const response = await axios.get(`https://backendabp.massalud.org.pe/getFechPago/${Datos?.id}`,{
         headers: {
           Authorization: `Bearer ${token}`,
         },

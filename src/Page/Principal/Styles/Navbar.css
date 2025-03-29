@@ -1,9 +1,10 @@
 /* Estilos generales del navbar */
 .navbar {
+  height: 80px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #ffcc00; /* Un amarillo brillante */
+  background-color: #182d54; /* Un amarillo brillante */
   padding: 1rem 2rem;
   color: white;
   width: 100%;
@@ -15,6 +16,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex: 1;
 }
 
 .navbar .logo a {
@@ -22,7 +24,7 @@
 }
 
 .navbar-logo {
-  height: 70px;
+  height: 60px; /* Ajuste el tamaño del logo */
   transition: transform 0.3s ease;
 }
 
@@ -30,108 +32,160 @@
   transform: scale(1.1);
 }
 
-.search-input {
-  padding: 0.75rem 1.25rem;
-  border-radius: 20px;
-  border: 1px solid #ccc;
-  width: 300px;
-  height: 50px;
-  font-size: 1rem;
-  transition: width 0.3s ease;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: #007bff;
-  width: 350px;
-}
-
-.button-container {
+/* Rutas visibles en pantallas grandes */
+.nav-links {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  gap: 2rem;
 }
 
-.navbar-button {
-  background-color: white;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  font-size: 1.2rem;
-  color: #ffcc00;
-  border: none;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  display: flex;
-  justify-content: center;
-  padding: 20px;
-}
-
-.navbar-button:hover {
+.nav-links a {
+  text-decoration: none;
   color: white;
-  background-color: rgb(243, 239, 13);
-  transform: translateY(-3px);
+  font-size: 1.2rem;
+  transition: color 0.3s ease;
 }
 
-.navbar-button:focus {
-  outline: none;
+.nav-links a:hover {
+  color: #728cbd;
 }
 
-/* Media Queries para Responsividad */
+.nav-links .p-button {
+  height: 35px; /* Aseguramos que el botón tenga un tamaño adecuado */
+}
 
-/* Pantallas medianas a grandes (tabletas, laptops y pantallas grandes) */
-@media (max-width: 1024px) {
+/* Menú hamburguesa */
+.menu-icon {
+  display: none; /* Por defecto, el ícono de hamburguesa está oculto */
+  flex-direction: column;
+  gap: 0.3rem;
+  cursor: pointer;
+}
+
+.menu-icon .bar {
+  width: 30px;
+  height: 4px;
+  background-color: white;
+  border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Cuando el menú está abierto */
+.menu-icon.open .bar:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+
+.menu-icon.open .bar:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-icon.open .bar:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* Logo en el sidebar */
+.navbar-logo-Side {
+  height: 120px; /* Ajuste el tamaño del logo en el sidebar */
+  width: 120px; /* Establecemos un ancho igual al alto para que sea circular */
+  margin-bottom: 2rem; /* Separación entre el logo y las rutas */
+  object-fit: cover; /* Asegura que el logo no se deforme */
+  border-radius: 50%; /* Hace que la imagen sea circular */
+  border: 5px solid white; /* Borde blanco alrededor de la imagen */
+  display: block; /* Asegura que la imagen se muestre correctamente */
+  margin-left: auto;
+  margin-right: auto;
+  padding: 10px;
+}
+
+/* Sidebar */
+.sidebar {
+  z-index: 100;
+  position: fixed;
+  top: 0;
+  left: -250px; /* El sidebar comienza oculto a la izquierda */
+  width: 250px;
+  height: 100%;
+  background-color: #182d54;
+  color: white;
+  transition: left 0.3s ease-in-out; /* Desliza el sidebar */
+  padding-top: 2rem; /* Ajuste para dejar espacio debajo del logo */
+  padding-left: 1rem; /* Separación de las rutas */
+}
+
+.sidebar.open {
+  left: 0; /* Cuando el menú está abierto, el sidebar se mueve hacia la derecha */
+}
+
+.sidebar-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Alineamos las rutas hacia la izquierda */
+}
+
+.sidebar-links a {
+  text-decoration: none;
+  text-align: center;
+  color: white;
+  font-size: 1.2rem;
+  padding: 1rem;
+  width: 100%;
+  transition: background-color 0.3s ease, padding-left 0.3s ease;
+}
+
+.sidebar-links a:hover {
+  background-color: #728cbd;
+  color: #333;
+  padding: 1rem; /* Desplazamiento hacia la derecha cuando se pasa el mouse */
+}
+
+.sidebar .p-button {
+  margin-top: 2rem;
+  width: 80%; /* Asegura que el botón de logout ocupe todo el ancho disponible */
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 25px; /* Borde redondeado */
+  display: flex; /* Usamos flexbox para centrar el contenido */
+  justify-content: center; /* Centra el texto horizontalmente */
+  align-items: center; /* Centra el texto verticalmente */
+  padding: 10px 0; /* Añadimos algo de relleno para darle altura al botón */
+  text-align: center; /* Asegura que el texto esté centrado */
+}
+/* Responsive: En pantallas pequeñas */
+@media (max-width: 768px) {
   .navbar {
     padding: 1rem;
   }
 
-  .search-input {
-    width: 250px; /* Reducir el ancho del campo de búsqueda */
+  .nav-links {
+    display: none; /* Ocultamos las rutas en pantallas pequeñas */
   }
 
-  .navbar-button {
-    width: 50px; /* Reducir el tamaño del botón */
-    height: 50px;
-  }
-}
-
-/* Pantallas pequeñas (móviles) */
-@media (max-width: 768px) {
-  .navbar .logo {
-    gap: 0.5rem;
-    justify-content: center;
+  /* Mostrar el ícono de hamburguesa */
+  .menu-icon {
+    display: flex;
   }
 
-  .search-input {
-    width: 100%; /* Hacer el campo de búsqueda más ancho */
-    height: 45px;
-    margin-top: 1rem; /* Añadir un margen superior */
+  /* El sidebar comienza oculto en pantallas pequeñas */
+  .sidebar {
+    left: -250px;
   }
 
-  .button-container {
-    margin-top: 1rem; /* Asegurarse de que el botón no se superponga con el logo */
-  }
-
-  .navbar-button {
-    width: 50px; /* Reducir el tamaño del botón */
-    height: 50px;
+  /* Cuando el menú está abierto, el sidebar se desliza hacia la derecha */
+  .sidebar.open {
+    left: 0;
   }
 }
 
-/* Pantallas extra pequeñas (móviles más pequeños) */
-@media (max-width: 480px) {
-  .navbar {
-    flex-direction: column; /* Cambiar la disposición a columna */
-    align-items: center;
+/* En pantallas grandes (más de 768px), el sidebar no se muestra */
+@media (min-width: 769px) {
+  .menu-icon {
+    display: none; /* El ícono hamburguesa se oculta en pantallas grandes */
   }
 
-  .search-input {
-    width: 100%; /* Ancho completo en pantallas muy pequeñas */
-    height: 40px; /* Hacer el campo de búsqueda más pequeño */
+  .sidebar {
+    display: none; /* El sidebar no se muestra en pantallas grandes */
   }
 
-  .navbar-button {
-    width: 45px; /* Hacer el botón aún más pequeño */
-    height: 45px;
+  .nav-links {
+    display: flex; /* Las rutas están visibles en pantallas grandes */
   }
 }

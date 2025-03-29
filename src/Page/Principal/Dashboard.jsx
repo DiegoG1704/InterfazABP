@@ -12,8 +12,9 @@ import DialogFechas from './Componentes/DialogFechas';
 import DialogObservaciones from './Componentes/DialogObservaciones';
 import DialogPersonal from './Componentes/DialogPersonal';
 import ExportExcel from './Componentes/ExportExcel';
+import { InputText } from 'primereact/inputtext';
 
-export default function Dashboard() {
+export default function Dashboard({Logout}) {
   const [select, setSelect] = useState([]);
   const [agregar, setAgregar] = useState(false);
   const [editPers, setEditPers] = useState(false);
@@ -31,13 +32,13 @@ export default function Dashboard() {
 
   const fetchMiembrosCount = async () => {
     const token = localStorage.getItem("authToken");
-
+    console.log('pubto miembrosCount');
     if (!token) {
       console.log("No se encontró token de autenticación.");
       return;
     }
     try {
-      const response = await axios.get(`http://localhost:3000/afiliadosCount`, {
+      const response = await axios.get(`https://backendabp.massalud.org.pe/afiliadosCount`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -50,13 +51,15 @@ export default function Dashboard() {
 
   const fetchMiembros = async () => {
     const token = localStorage.getItem("authToken");
+    console.log('pubto miembros');
+    
 
     if (!token) {
       console.log("No se encontró token de autenticación.");
       return;
     }
     try {
-      const response = await axios.get(`http://localhost:3000/List`, {
+      const response = await axios.get(`https://backendabp.massalud.org.pe/List`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -68,14 +71,14 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    fetchMiembros(); // Solo se ejecutará si hay un token
-    fetchMiembrosCount();
-  }, []); // El segundo useEffect solo se ejecuta una vez
-  
-  const Actualizar = () => {
     fetchMiembros();
     fetchMiembrosCount();
-  };
+  }, []);
+  
+  const Actualizar = () => {
+    fetchMiembros();  // Refresh members
+    fetchMiembrosCount();  // Refresh count
+  };  
 
   const openConfirmDialog = (rowData) => {
     setSelectedMember(rowData); // Guarda el miembro seleccionado
@@ -97,7 +100,7 @@ export default function Dashboard() {
       return;
     }
     try {
-      await axios.patch(`http://localhost:3000/Suspender/${selectedSuspendMember.id}`,{},  // El cuerpo de la solicitud está vacío, ya que solo queremos hacer una acción de confirmación
+      await axios.patch(`https://backendabp.massalud.org.pe/Suspender/${selectedSuspendMember.id}`,{},  // El cuerpo de la solicitud está vacío, ya que solo queremos hacer una acción de confirmación
         {
             headers: {
                 Authorization: `Bearer ${token}`, // Asegúrate de pasar el token correctamente en los headers
@@ -121,7 +124,7 @@ export default function Dashboard() {
       return;
     }
     try {
-      await axios.patch(`http://localhost:3000/Reiniciar/${selectedMember.id}`,{},{
+      await axios.patch(`https://backendabp.massalud.org.pe/Reiniciar/${selectedMember.id}`,{},{
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -244,7 +247,7 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard-container">
-      <Navbar setSearchTerm={setSearchTerm} />
+      <Navbar Logout={Logout}/>
       <div className="dashboard-content">
         <h1>Bienvenido a la Interfaz de Usuario de ABP</h1>
         <div className='cantidad'>
@@ -252,19 +255,26 @@ export default function Dashboard() {
           <span>Suspendidos:{cantidad?.suspendidos}</span>
         </div>
       </div>
-      <div style={{ display: 'flex', justifyContent:'space-between', margin: '20px' }}>
-      <ExportExcel data={miembros} /> {/* Agregar el componente ExportExcel */}
-        <Button
-          label='+Agregar'
-          style={{ background: 'white', color: 'black', borderColor: 'white' }}
-          onClick={() => setAgregar(true)}
+      <div className='Buscador'>
+      <InputText
+          placeholder="Buscar miembro..." 
+          className="search-input" 
+          onChange={(e) => setSearchTerm(e.target.value)}  // Actualizar el término de búsqueda
         />
+        <div className='Aplicaciones'>
+        <ExportExcel data={miembros} /> {/* Agregar el componente ExportExcel */}
+          <Button
+            label='+Agregar'
+            style={{ background: 'white', color: 'black', borderColor: 'white' }}
+            onClick={() => setAgregar(true)}
+          />
+        </div>
       </div>
       <div className="dashboard-table">
         <DataTable value={filteredMiembros} tableStyle={{ minWidth: '50rem' }}>
           <Column header="Code" body={(rowData, { rowIndex }) => rowIndex + 1}></Column>
           <Column field="fechaAfiliacion" header="Fecha de Afiliacion"></Column>
-          <Column field="ruc" header="Ruc"></Column>
+          <Column field="codigo" header="Codigo"></Column>
           <Column field="dni" header="DNI"></Column>
           <Column field="nombre" header="Nombre"></Column>
           <Column field="apellido" header="Apellido"></Column>
@@ -277,7 +287,7 @@ export default function Dashboard() {
       </div>
       <DialogAgregar Visible={agregar} Close={() => setAgregar(false)} Actualizar={Actualizar} />
       <DialogTienda Visible={tienda} Close={() => setTienda(false)} Datos={select} SetDatos={setSelect} Actualizar={fetchMiembros} />
-      <DialogFechas Visible={fechas} Close={() => setFechas(false)} Datos={select} />
+      <DialogFechas Visible={fechas} Close={() => setFechas(false)} Datos={select} Actualizar={fetchMiembros}/>
       <DialogObservaciones Visible={observaciones} Close={() => setObservaciones(false)} Datos={select} SetDatos={setSelect} Actualizar={fetchMiembros} />
       <DialogPersonal Visible={editPers} Close={() => setEditPers(false)} Datos={select} Actualizar={fetchMiembros} />
       <ConfirmDialog

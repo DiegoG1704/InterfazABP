@@ -27,6 +27,20 @@ body {
   min-height: 100vh;
 }
 
+.custom-stepper .p-step-indicator {
+  background-color: #f1f1f1; /* Fondo gris para los pasos no activos */
+  color: #333; /* Color de texto gris oscuro */
+}
+
+.custom-stepper .p-step-indicator.p-highlight {
+  background-color: #007ad9; /* Fondo azul para el paso activo */
+  color: #fff; /* Texto blanco para el paso activo */
+}
+
+.custom-stepper .p-step-label {
+  font-size: 14px; /* Tamaño de fuente más pequeño */
+}
+
 /* h1 {
   font-size: 3.2em;
   line-height: 1.1;

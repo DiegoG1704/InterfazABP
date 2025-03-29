@@ -1,28 +1,28 @@
-import Login from './Page/Login/login.jsx';
-import { Routes, Route, BrowserRouter } from 'react-router-dom';
-import Dashboard from './Page/Principal/Dashboard.jsx';
-import 'primeflex/primeflex.css';
-import PrivateRoute from './PrivateRoute.jsx';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import GuestRouter from "./Page/router/GuestRouter.jsx";
+import PrivateRoute from "./Page/router/PrivateRoute.jsx";
+import "../node_modules/primeflex/primeflex.css"
 
 function App() {
-  return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          
-          {/* Ruta protegida */}
-          <Route 
-            path="/Dashboard" 
-            element={
-              <PrivateRoute>
-                <Dashboard />
-              </PrivateRoute>
-            } 
-          />
-        </Routes>
-      </BrowserRouter>
-    </div>
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      setIsAuthenticated(false);
+      console.log("Usuario no autenticado, redirigiendo al login"); // <-- Depuración
+      navigate("/"); // Redirigir al login
+    } else {
+      setIsAuthenticated(true);
+    }
+  }, [navigate]);
+
+  return isAuthenticated ? (
+    <PrivateRoute setIsAuthenticated={setIsAuthenticated} />
+  ) : (
+    <GuestRouter setIsAuthenticated={setIsAuthenticated} />
   );
 }
 

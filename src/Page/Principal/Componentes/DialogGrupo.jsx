@@ -21,7 +21,7 @@ export default function DialogGrupo({Visible,Close,Actualizar}) {
       return;
     }
         try {
-            const response = await axios.post(`http://localhost:3000/CreateGrupo`,datos,{
+            const response = await axios.post(`https://backendabp.massalud.org.pe/CreateGrupo`,datos,{
                 headers: {
                   Authorization: `Bearer ${token}`,
                 },

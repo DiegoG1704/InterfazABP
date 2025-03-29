@@ -21,7 +21,7 @@ export default function FormularioObs({ Back, Close, datos, setDatos,Actualizar 
       return;
     }
         try {
-            const response = await axios.get(`http://localhost:3000/getMetodo`,{
+            const response = await axios.get(`https://backendabp.massalud.org.pe/getMetodo`,{
                 headers: {
                   Authorization: `Bearer ${token}`,
                 },
@@ -40,7 +40,7 @@ export default function FormularioObs({ Back, Close, datos, setDatos,Actualizar 
       return;
     }
         try {
-            const response = await axios.get(`http://localhost:3000/getGrupos`,{
+            const response = await axios.get(`https://backendabp.massalud.org.pe/getGrupos`,{
                 headers: {
                   Authorization: `Bearer ${token}`,
                 },
@@ -81,14 +81,12 @@ export default function FormularioObs({ Back, Close, datos, setDatos,Actualizar 
         }
     
         try {
-            // Asegúrate de convertir el RUC a número antes de enviarlo
-            const datosConRucComoNumero = {
+            const datosConRuc = {
                 ...datos,
-                ruc: Number(datos.ruc)  // Convertimos el RUC a número
+                ruc: typeof datos.ruc === 'string' ? datos.ruc.trim() : 'Sin RUC', // Verifica si ruc es un string antes de usar trim()
             };
     
-            // Realizar el envío de los datos con el RUC convertido a número
-            const response = await axios.post(`http://localhost:3000/CreateUsuario`, datosConRucComoNumero, {
+            const response = await axios.post(`https://backendabp.massalud.org.pe/CreateUsuario`, datosConRuc, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -112,34 +110,36 @@ export default function FormularioObs({ Back, Close, datos, setDatos,Actualizar 
                 estadoWhatsapp: '',
                 estadoGrupo: '',
                 observaciones: '',
+                codigo: '',
             });
     
-            Close();  // Cierra el formulario o el modal (si lo estás usando)
+            Close();  // Cierra el formulario o el modal
             Actualizar();  // Actualiza el estado o la vista
-    
         } catch (error) {
             console.log('error', error);
         }
     };
     
+    
 
     return (
         <div className='flex flex-column'>
-            <div className='flex flex-column m-2'>
+            <div className='flex flex-column'>
                 <strong>Metodo de afiliacion</strong>
-                <div>
+                <div className='p-inputgroup'>
                     <Dropdown
                         value={Metodos.find(m => m.id === datos.metodoAfiliacion)}  // Aquí buscamos el objeto completo
                         onChange={(e) => handleLocalChange(e, 'metodoAfiliacion')}
                         options={Metodos}
                         optionLabel="nombre"
                         placeholder="Seleccione metodo..."
+                        className="p-inputtext-base"
                         filter
                     />
-                    <Button label='Agregar' onClick={()=>setMetodo(true)}/>
+                    <Button label='Agregar' onClick={()=>setMetodo(true)} className="p-button-primary p-button-base p-inputtext-base" severity='info'/>
                 </div>
             </div>
-            <div className='flex flex-column m-2'>
+            <div className='flex flex-column'>
                 <strong>Estado de WhatsApp</strong>
                 <Dropdown
                     value={EstadoWhats.find(w => w.id === datos.estadoWhatsapp)}  // Aquí buscamos el objeto completo
@@ -150,20 +150,22 @@ export default function FormularioObs({ Back, Close, datos, setDatos,Actualizar 
                     filter
                 />
             </div>
-            <div className='flex flex-column m-2'>
+            <div className='flex flex-column'>
                 <strong>Grupo</strong>
-                <div className='flex'>
+                <div className='p-inputgroup'>
                     <Dropdown
                         value={distritos.find(d => d.id === datos.estadoGrupo)}  // Aquí buscamos el objeto completo
                         onChange={(e) => handleLocalChange(e, 'estadoGrupo')}
                         options={distritos}
                         optionLabel="nombre"
                         placeholder="Seleccione grupo..."
+                        className="p-inputtext-base"
+                        filter
                     />
-                    <Button label='Agregar' onClick={()=>setGrupo(true)}/>
+                    <Button label='Agregar' onClick={()=>setGrupo(true)} className="p-button-primary p-button-base p-inputtext-base" severity="info"/>
                 </div>
             </div>
-            <div className='flex flex-column m-2'>
+            <div className='flex flex-column'>
                 <strong>Observacion</strong>
                 <InputTextarea
                     placeholder='Ingrese observacion...'
@@ -172,9 +174,9 @@ export default function FormularioObs({ Back, Close, datos, setDatos,Actualizar 
                     onChange={handleChange}
                 />
             </div>
-            <div className="flex pt-4 justify-content-between m-2">
-                <Button label="Regresar" severity="secondary" icon="pi pi-arrow-left" onClick={Back} />
-                <Button label="Agregar" iconPos="right" onClick={handleSubmit} />
+            <div className="flex pt-4 justify-content-between">
+                <Button label="Regresar" severity="info" icon="pi pi-arrow-left" onClick={Back} />
+                <Button label="Agregar" iconPos="right" onClick={handleSubmit} className="p-button-success p-button-base" />
             </div>
 
             <DialogGrupo

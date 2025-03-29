@@ -21,7 +21,7 @@ export default function DialogMetodo({Visible,Close,Actualizar}) {
       return;
     }
         try {
-            const response = await axios.post(`http://localhost:3000/CreateMetodo`,datos,{
+            const response = await axios.post(`https://backendabp.massalud.org.pe/CreateMetodo`,datos,{
                 headers: {
                   Authorization: `Bearer ${token}`,
                 },

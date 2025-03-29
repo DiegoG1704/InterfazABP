@@ -41,7 +41,7 @@ export default function DialogTienda({ Visible, Close, Datos, SetDatos,Actualiza
     }
   
     try {
-      const response = await axios.patch(`http://localhost:3000/editCampo/${Datos.id}`, campoYValor,{
+      const response = await axios.patch(`https://backendabp.massalud.org.pe/editCampo/${Datos.id}`, campoYValor,{
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -69,7 +69,7 @@ export default function DialogTienda({ Visible, Close, Datos, SetDatos,Actualiza
       return;
     }
         try {
-            const response = await axios.get(`http://localhost:3000/distritos`,{
+            const response = await axios.get(`https://backendabp.massalud.org.pe/distritos`,{
               headers: {
                 Authorization: `Bearer ${token}`,
               },

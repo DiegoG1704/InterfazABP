@@ -37,7 +37,7 @@ export default function DialogPersonal({ Visible, Close, Datos, Actualizar }) {
     }
         try {
             // Enviamos los datos editados al servidor usando axios
-            const response = await axios.patch(`http://localhost:3000/editPersonal/${Datos?.id}`, datosP,{
+            const response = await axios.patch(`https://backendabp.massalud.org.pe/editPersonal/${Datos?.id}`, datosP,{
                 headers: {
                   Authorization: `Bearer ${token}`,
                 },

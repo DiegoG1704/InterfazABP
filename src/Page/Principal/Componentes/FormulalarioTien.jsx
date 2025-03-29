@@ -15,7 +15,7 @@ export default function FormulalarioTien({ Back, Next, datos, setDatos }) {
       return;
     }
         try {
-            const response = await axios.get(`http://localhost:3000/distritos`,{
+            const response = await axios.get(`https://backendabp.massalud.org.pe/distritos`,{
                 headers: {
                   Authorization: `Bearer ${token}`,
                 },
@@ -64,8 +64,8 @@ export default function FormulalarioTien({ Back, Next, datos, setDatos }) {
 
     return (
         <div className='flex flex-column'>
-            <div className='flex flex-column m-2'>
-                <strong>Ruc</strong>
+            <div className='flex flex-column'>
+                <strong>Ruc(Opcional)</strong>
                 <InputText
                     name='ruc'
                     onChange={handleChange}
@@ -73,7 +73,7 @@ export default function FormulalarioTien({ Back, Next, datos, setDatos }) {
                     placeholder='Ingrese su ruc...'
                 />
             </div>
-            <div className='flex flex-column m-2'>
+            <div className='flex flex-column'>
                 <strong>Nombre de bodega</strong>
                 <InputText
                     name='nombreBodega'
@@ -82,7 +82,7 @@ export default function FormulalarioTien({ Back, Next, datos, setDatos }) {
                     placeholder='Ingrese su nombre de tienda...'
                 />
             </div>
-            <div className='flex flex-column m-2'>
+            <div className='flex flex-column'>
                 <strong>Distrito</strong>
                 <Dropdown
                     options={distritos}
@@ -95,7 +95,7 @@ export default function FormulalarioTien({ Back, Next, datos, setDatos }) {
                     itemTemplate={districtItemTemplate} // Personalizamos cómo se muestra cada opción
                 />
             </div>
-            <div className='flex flex-column m-2'>
+            <div className='flex flex-column'>
                 <strong>Direccion</strong>
                 <InputText
                     name='direccion'
@@ -104,7 +104,7 @@ export default function FormulalarioTien({ Back, Next, datos, setDatos }) {
                     placeholder='Ingrese su direccion...'
                 />
             </div>
-            <div className='flex flex-column m-2'>
+            <div className='flex flex-column'>
                 <strong>Referencia</strong>
                 <InputText
                     name='referencia'
@@ -113,9 +113,9 @@ export default function FormulalarioTien({ Back, Next, datos, setDatos }) {
                     placeholder='Ingrese su correo...'
                 />
             </div>
-            <div className='flex pt-4 justify-content-between m-2'>
-                <Button label='Regresar' severity='secondary' icon='pi pi-arrow-left' onClick={Back} />
-                <Button label='Siguiente' iconPos='right' icon='pi pi-arrow-right' onClick={handleSubmit} />
+            <div className='flex pt-4 justify-content-between'>
+                <Button label='Regresar' severity="info" icon='pi pi-arrow-left' onClick={Back} />
+                <Button className="p-button-success p-button-base"  label='Siguiente' iconPos='right' icon='pi pi-arrow-right' onClick={handleSubmit} />
             </div>
         </div>
     );

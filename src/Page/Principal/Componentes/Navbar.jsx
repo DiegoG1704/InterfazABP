@@ -1,55 +1,63 @@
-import React, { useRef } from 'react';
+import React, { useState } from 'react';
 import '../Styles/Navbar.css';
 import Logo from '../Imagen/LogoABP.png';
-import { Button } from 'primereact/button';
-import { InputText } from 'primereact/inputtext';
-import { Menu } from 'primereact/menu';
-import { useNavigate } from 'react-router-dom';
 
-export default function Navbar({ setSearchTerm }) {
-  const menuLeft = useRef(null);
-  const navigate = useNavigate(); // Usar useNavigate para redirigir
+import { Link, useNavigate } from 'react-router-dom';
+import { Button } from 'primereact/button';
+
+export default function Navbar({ Logout }) {
+  const [menuOpen, setMenuOpen] = useState(false); // Estado para controlar el menú hamburguesa
+  const navigate = useNavigate();
 
   const submit = () => {
     // Eliminar el 'authToken' del localStorage
     localStorage.removeItem('authToken');
+    Logout(false);
     navigate('/');
   };
-  const items = [
-    {
-      label: 'Opciones',
-      items: [
-        {
-          label: 'Cerrar Sesion',
-          icon: 'pi pi-sign-out',
-          // Redirigir al hacer clic en "Cerrar Sesion"
-          command: () => {
-            // Aquí puedes agregar cualquier lógica de cierre de sesión si es necesario
-            submit();  // Redirigir a la página principal
-          }
-        },
-      ]
-    }
-  ];
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen); // Alternar el estado del menú hamburguesa
+  };
 
   return (
     <header>
       <nav className="navbar">
         <div className="logo">
-          <a href="/">
+          <Link to="/">
             <img src={Logo} alt="Logo" className="navbar-logo" />
-          </a>
-          <InputText 
-            placeholder="Buscar miembro..." 
-            className="search-input" 
-            onChange={(e) => setSearchTerm(e.target.value)}  // Actualizar el término de búsqueda
-          />
+          </Link>
         </div>
-        <div className="button-container">
-          <Button label="ABP" className="navbar-button" onClick={(event) => menuLeft.current.toggle(event)} />
-          <Menu model={items} popup ref={menuLeft} id="popup_menu_left" />
+
+        {/* Rutas visibles en pantallas grandes */}
+        <div className="nav-links">
+          <a onClick={() => navigate('/Dashboard')}>Afiliados</a>
+          <a onClick={() => navigate('/Estadisticas')}>Estadísticas</a>
+          <Button onClick={submit} severity="danger" outlined>Cerrar Sesion</Button>
+        </div>
+
+        {/* Menú hamburguesa en pantallas pequeñas */}
+        <div className={`menu-icon ${menuOpen ? 'open' : ''}`} onClick={toggleMenu}>
+          <span className="bar"></span>
+          <span className="bar"></span>
+          <span className="bar"></span>
         </div>
       </nav>
+
+      {/* Sidebar que aparece solo cuando se presiona el botón hamburguesa */}
+      <div className={`sidebar ${menuOpen ? 'open' : ''}`}>
+        <div className="logo">
+          <Link to="/">
+            <img src={Logo} alt="Logo" className="navbar-logo-Side" />
+          </Link>
+        </div>
+        <div className="sidebar-links">
+          <a onClick={() => navigate('/Dashboard')}>Afiliados</a>
+          <a onClick={() => navigate('/Estadisticas')}>Estadísticas</a>
+          {/* Botón de Logout en el sidebar */}
+          <Button onClick={submit} severity="danger" outlined className="sidebar-logout-button">Cerrar Sesion</Button>
+        </div>
+      </div>
     </header>
   );
 }
