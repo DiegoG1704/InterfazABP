@@ -81,12 +81,12 @@ export default function FormularioObs({ Back, Close, datos, setDatos,Actualizar 
         }
     
         try {
-            const datosConRuc = {
-                ...datos,
-                ruc: typeof datos.ruc === 'string' ? datos.ruc.trim() : 'Sin RUC', // Verifica si ruc es un string antes de usar trim()
-            };
+            // const datosConRuc = {
+            //     ...datos,
+            //     ruc: typeof datos.ruc === 'string' ? datos.ruc.trim() : 'Sin RUC', // Verifica si ruc es un string antes de usar trim()
+            // };
     
-            const response = await axios.post(`https://backendabp.massalud.org.pe/CreateUsuario`, datosConRuc, {
+            const response = await axios.post(`https://backendabp.massalud.org.pe/CreateUsuario`, datos, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

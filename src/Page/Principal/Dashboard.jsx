@@ -14,7 +14,7 @@ import DialogPersonal from './Componentes/DialogPersonal';
 import ExportExcel from './Componentes/ExportExcel';
 import { InputText } from 'primereact/inputtext';
 
-export default function Dashboard({Logout}) {
+export default function Dashboard() {
   const [select, setSelect] = useState([]);
   const [agregar, setAgregar] = useState(false);
   const [editPers, setEditPers] = useState(false);
@@ -48,6 +48,11 @@ export default function Dashboard({Logout}) {
       console.log('Error al obtener miembros:', error);
     }
   };
+  
+  useEffect(() => {
+    fetchMiembros();
+    fetchMiembrosCount();
+  }, []);
 
   const fetchMiembros = async () => {
     const token = localStorage.getItem("authToken");
@@ -70,10 +75,7 @@ export default function Dashboard({Logout}) {
     }
   };
 
-  useEffect(() => {
-    fetchMiembros();
-    fetchMiembrosCount();
-  }, []);
+  
   
   const Actualizar = () => {
     fetchMiembros();  // Refresh members
@@ -247,7 +249,6 @@ export default function Dashboard({Logout}) {
 
   return (
     <div className="dashboard-container">
-      <Navbar Logout={Logout}/>
       <div className="dashboard-content">
         <h1>Bienvenido a la Interfaz de Usuario de ABP</h1>
         <div className='cantidad'>
@@ -271,7 +272,7 @@ export default function Dashboard({Logout}) {
         </div>
       </div>
       <div className="dashboard-table">
-        <DataTable value={filteredMiembros} tableStyle={{ minWidth: '50rem' }}>
+        <DataTable value={filteredMiembros} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]} tableStyle={{ minWidth: '50rem' }}>
           <Column header="Code" body={(rowData, { rowIndex }) => rowIndex + 1}></Column>
           <Column field="fechaAfiliacion" header="Fecha de Afiliacion"></Column>
           <Column field="codigo" header="Codigo"></Column>

@@ -31,8 +31,8 @@ export default function Navbar({ Logout }) {
 
         {/* Rutas visibles en pantallas grandes */}
         <div className="nav-links">
-          <a onClick={() => navigate('/Dashboard')}>Afiliados</a>
-          <a onClick={() => navigate('/Estadisticas')}>Estadísticas</a>
+          <Link to="/Dashboard">Afiliados</Link>
+          <Link to="/Estadisticas">Estadísticas</Link>
           <Button onClick={submit} severity="danger" outlined>Cerrar Sesion</Button>
         </div>
 
@@ -52,8 +52,9 @@ export default function Navbar({ Logout }) {
           </Link>
         </div>
         <div className="sidebar-links">
-          <a onClick={() => navigate('/Dashboard')}>Afiliados</a>
-          <a onClick={() => navigate('/Estadisticas')}>Estadísticas</a>
+          <Link to="/Dashboard">Afiliados</Link>
+          <Link to="/Estadisticas">Estadísticas</Link>
+          <Link to="/Estadisticas">Estadísticas</Link>
           {/* Botón de Logout en el sidebar */}
           <Button onClick={submit} severity="danger" outlined className="sidebar-logout-button">Cerrar Sesion</Button>
         </div>

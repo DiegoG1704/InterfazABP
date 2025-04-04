@@ -227,6 +227,10 @@ export default function DialogTienda({ Visible, Close, Datos, SetDatos,Actualiza
         {/* Teléfonos */}
         <div>
           <strong>Teléfono</strong>
+          <div>
+            <InputText placeholder='telefono'/>
+            <Button label='Agregar'/>
+          </div>
           {Datos.telefonos && Datos.telefonos.length > 0 ? (
             Datos.telefonos.map((telefono, index) => (
               <div key={index} style={{ display: 'flex', flexDirection: 'column' }}>

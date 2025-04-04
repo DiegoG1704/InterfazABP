@@ -31,7 +31,7 @@ export default function DialogAgregar({ Visible, Close, Actualizar }) {
             visible={Visible} 
             onHide={Close} 
             header="Agregar Usuario" 
-            style={{ width: '32vw', minWidth: '350px' }} // Tamaño de la ventana
+            style={{ width: '32vw', minWidth: '450px' }} // Tamaño de la ventana
             footer={null} // Desactivar el pie de página por defecto
         >
             <div className="card flex justify-content-center">
