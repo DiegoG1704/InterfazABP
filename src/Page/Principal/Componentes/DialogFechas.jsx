@@ -4,29 +4,23 @@ import { Dialog } from 'primereact/dialog';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import React, { useState, useEffect, useRef } from 'react';
 import { Toast } from 'primereact/toast';
+import axiosToken from '../Herramientas/AxiosToken';
 
 export default function DialogFechas({ Visible, Close, Datos,Actualizar }) {
   const [fecha, setFecha] = useState({ pagos: [], ultimoAño: "", isNextYearDisabled: false }); // Agregar isNextYearDisabled al estado
   const toast = useRef(null);
 
   const accept = async () => {
-    const token = localStorage.getItem("authToken");  // Obtener el token desde localStorage
+    const axiosInstance = axiosToken();
 
-    if (!token) {
-        console.log("No se encontró token de autenticación.");
+    if (!axiosInstance) {
         return;
     }
-
     try {
         // Enviar el token en los headers
-        const response = await axios.post(
-            `https://backendabp.massalud.org.pe/PostPago/${Datos?.id}`, // URL del endpoint
-            {},  // El cuerpo de la solicitud está vacío, ya que solo queremos hacer una acción de confirmación
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`, // Asegúrate de pasar el token correctamente en los headers
-                },
-            }
+        const response = await axiosInstance.post(
+            `/PostPago/${Datos?.id}`, // URL del endpoint
+            {}
         );
 
         console.log(response);
@@ -66,18 +60,13 @@ export default function DialogFechas({ Visible, Close, Datos,Actualizar }) {
   }, [Visible, Datos]);
 
   const fetchFecha = async () => {
-    const token = localStorage.getItem("authToken");
+    const axiosInstance = axiosToken();
 
-    if (!token) {
-      console.log("No se encontró token de autenticación.");
-      return;
+    if (!axiosInstance) {
+        return;
     }
     try {
-      const response = await axios.get(`https://backendabp.massalud.org.pe/getFechPago/${Datos?.id}`,{
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axiosInstance.get(`/getFechPago/${Datos?.id}`);
       if (response.status === 200) {
         const { pagos, ultimoAño } = response.data;
         

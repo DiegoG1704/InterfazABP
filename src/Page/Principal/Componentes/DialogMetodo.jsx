@@ -14,19 +14,13 @@ export default function DialogMetodo({Visible,Close,Actualizar}) {
     };
 
     const hadleSubmit =async()=>{
-        const token = localStorage.getItem("authToken");
+        const axiosInstance = axiosToken();
 
-    if (!token) {
-      console.log("No se encontró token de autenticación.");
-      return;
-    }
+        if (!axiosInstance) {
+            return;
+        }
         try {
-            const response = await axios.post(`https://backendabp.massalud.org.pe/CreateMetodo`,datos,{
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              });
-            console.log(response);
+            const response = await axiosInstance.post(`/CreateMetodo`,datos);
             setDatos({
                 nombre:''
             });

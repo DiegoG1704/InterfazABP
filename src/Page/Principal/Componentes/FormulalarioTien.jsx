@@ -3,23 +3,19 @@ import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import React, { useEffect, useState } from 'react';
+import axiosToken from '../Herramientas/AxiosToken';
 
 export default function FormulalarioTien({ Back, Next, datos, setDatos }) {
     const [distritos, setDistritos] = useState([]);
 
     const fetchDistritos = async () => {
-        const token = localStorage.getItem("authToken");
+        const axiosInstance = axiosToken();
 
-    if (!token) {
-      console.log("No se encontró token de autenticación.");
-      return;
-    }
+        if (!axiosInstance) {
+            return;
+        }
         try {
-            const response = await axios.get(`https://backendabp.massalud.org.pe/distritos`,{
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              });
+            const response = await axiosInstance.get(`/distritos`);
             setDistritos(response.data);
         } catch (error) {
             console.log('error', error);

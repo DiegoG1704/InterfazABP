@@ -5,6 +5,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import React, { useEffect, useState } from 'react';
 import { InputTextarea } from 'primereact/inputtextarea'
+import axiosToken from '../Herramientas/AxiosToken';
 
 export default function DialogObservaciones({Visible,Close,Datos,SetDatos,Actualizar}) {
   const [isEditable, setIsEditable] = useState({
@@ -26,18 +27,13 @@ export default function DialogObservaciones({Visible,Close,Datos,SetDatos,Actual
     const [Metodos, setMetodos] = useState([]);
 
     const fetchMetodos = async () => {
-      const token = localStorage.getItem("authToken");
+      const axiosInstance = axiosToken();
 
-    if (!token) {
-      console.log("No se encontró token de autenticación.");
-      return;
-    }
+      if (!axiosInstance) {
+          return;
+      }
         try {
-            const response = await axios.get(`https://backendabp.massalud.org.pe/getMetodo`,{
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
+            const response = await axiosInstance.get(`/getMetodo`);
             setMetodos(response.data);
         } catch (error) {
             console.log('error', error);
@@ -45,18 +41,13 @@ export default function DialogObservaciones({Visible,Close,Datos,SetDatos,Actual
     }
 
     const fetchDistritos = async () => {
-      const token = localStorage.getItem("authToken");
+      const axiosInstance = axiosToken();
 
-    if (!token) {
-      console.log("No se encontró token de autenticación.");
-      return;
-    }
+      if (!axiosInstance) {
+          return;
+      }
         try {
-            const response = await axios.get(`https://backendabp.massalud.org.pe/getGrupos`,{
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
+            const response = await axiosInstance.get(`/getGrupos`);
             setDistritos(response.data);
         } catch (error) {
             console.log('error', error);
@@ -98,20 +89,13 @@ export default function DialogObservaciones({Visible,Close,Datos,SetDatos,Actual
               field === 'metodoAfiliacion' ? Datos.metodoAfiliacion : Datos[field], 
       };
 
-      const token = localStorage.getItem("authToken");
+      const axiosInstance = axiosToken();
 
-    if (!token) {
-      console.log("No se encontró token de autenticación.");
-      return;
-    }
-    
+      if (!axiosInstance) {
+          return;
+      }
       try {
-        const response = await axios.patch(`https://backendabp.massalud.org.pe/editCampo/${Datos.id}`, campoYValor,{
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        console.log(response.data);
+        const response = await axiosInstance.patch(`/editCampo/${Datos.id}`, campoYValor);
         setIsEditable((prev) => ({
           ...prev,
           [field]: false,
@@ -201,6 +185,7 @@ export default function DialogObservaciones({Visible,Close,Datos,SetDatos,Actual
                 value={Datos.observaciones}
                 disabled={!isEditable.observaciones} 
                 onChange={(e) => handleInputChange(e, 'observaciones')}
+                style={{height:'10rem'}}
                 />
                 {editingField !== 'observaciones' ? (
                     <Button

@@ -13,6 +13,8 @@ import DialogObservaciones from './Componentes/DialogObservaciones';
 import DialogPersonal from './Componentes/DialogPersonal';
 import ExportExcel from './Componentes/ExportExcel';
 import { InputText } from 'primereact/inputtext';
+import axiosToken from './Herramientas/AxiosToken';
+import CustomDataTable from './Herramientas/CustomDataTable';
 
 export default function Dashboard() {
   const [select, setSelect] = useState([]);
@@ -32,17 +34,13 @@ export default function Dashboard() {
 
   const fetchMiembrosCount = async () => {
     const token = localStorage.getItem("authToken");
-    console.log('pubto miembrosCount');
-    if (!token) {
-      console.log("No se encontró token de autenticación.");
-      return;
+    const axiosInstance = axiosToken();
+
+    if (!axiosInstance) {
+        return;
     }
     try {
-      const response = await axios.get(`https://backendabp.massalud.org.pe/afiliadosCount`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axiosInstance.get(`/afiliadosCount`);
       setCantidad(response.data);
     } catch (error) {
       console.log('Error al obtener miembros:', error);
@@ -55,20 +53,13 @@ export default function Dashboard() {
   }, []);
 
   const fetchMiembros = async () => {
-    const token = localStorage.getItem("authToken");
-    console.log('pubto miembros');
-    
+    const axiosInstance = axiosToken();
 
-    if (!token) {
-      console.log("No se encontró token de autenticación.");
-      return;
+    if (!axiosInstance) {
+        return;
     }
     try {
-      const response = await axios.get(`https://backendabp.massalud.org.pe/List`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axiosInstance.get(`/List`,);
       setMiembros(response.data);
     } catch (error) {
       console.log('Error al obtener miembros:', error);
@@ -95,19 +86,13 @@ export default function Dashboard() {
   const handleSuspender = async () => {
     if (!selectedSuspendMember) return;
 
-    const token = localStorage.getItem("authToken");
+    const axiosInstance = axiosToken();
 
-    if (!token) {
-      console.log("No se encontró token de autenticación.");
-      return;
-    }
+        if (!axiosInstance) {
+            return;
+        }
     try {
-      await axios.patch(`https://backendabp.massalud.org.pe/Suspender/${selectedSuspendMember.id}`,{},  // El cuerpo de la solicitud está vacío, ya que solo queremos hacer una acción de confirmación
-        {
-            headers: {
-                Authorization: `Bearer ${token}`, // Asegúrate de pasar el token correctamente en los headers
-            },
-        });
+      await axiosInstance.patch(`/Suspender/${selectedSuspendMember.id}`,{});
         Actualizar(); // Refrescar la lista después de la actualización
     } catch (error) {
       console.error('Error al suspender:', error);
@@ -119,18 +104,13 @@ export default function Dashboard() {
 
   const handleReiniciar = async () => {
     if (!selectedMember) return;
-    const token = localStorage.getItem("authToken");
+    const axiosInstance = axiosToken();
 
-    if (!token) {
-      console.log("No se encontró token de autenticación.");
-      return;
+    if (!axiosInstance) {
+        return;
     }
     try {
-      await axios.patch(`https://backendabp.massalud.org.pe/Reiniciar/${selectedMember.id}`,{},{
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axiosInstance.patch(`/Reiniciar/${selectedMember.id}`,{});
       Actualizar(); // Refrescar la lista después de la actualización
     } catch (error) {
       console.error('Error al reiniciar:', error);
@@ -245,7 +225,24 @@ export default function Dashboard() {
           </span>
         );
     }
-  };  
+  }; 
+  
+  const columns = [
+    {
+      header: 'Nº',
+      body: (row, { rowIndex }) => rowIndex + 1,  // Mostrar el número de la fila
+    },
+    { header: 'Fecha de Afiliacion', field: 'fechaAfiliacion' },
+    { header: 'Codigo', field: 'codigo' },
+    { header: 'DNI', field: 'dni' },
+    { header: 'Nombres', field: 'nombre' },
+    { header: 'Apellidos', field: 'apellido' },
+    { header: 'Estado', body:statusBodyTemplate },
+    { header: 'Pagos', body: ButtonFechas },
+    { header: 'Tienda', body: ButtonTienda },
+    { header: 'Observacion', body: ButtonObs },
+    { header: 'Herramientas', body: ButtonHerram },
+  ];
 
   return (
     <div className="dashboard-container">
@@ -272,19 +269,13 @@ export default function Dashboard() {
         </div>
       </div>
       <div className="dashboard-table">
-        <DataTable value={filteredMiembros} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]} tableStyle={{ minWidth: '50rem' }}>
-          <Column header="Code" body={(rowData, { rowIndex }) => rowIndex + 1}></Column>
-          <Column field="fechaAfiliacion" header="Fecha de Afiliacion"></Column>
-          <Column field="codigo" header="Codigo"></Column>
-          <Column field="dni" header="DNI"></Column>
-          <Column field="nombre" header="Nombre"></Column>
-          <Column field="apellido" header="Apellido"></Column>
-          <Column field="estadoSocio" header="Estado" body={statusBodyTemplate}></Column> {/* Renderizado dinámico de estado */}
-          <Column body={ButtonFechas} header="Pagos"></Column>
-          <Column body={ButtonTienda} header="Tienda"></Column>
-          <Column body={ButtonObs} header="Observacion"></Column>
-          <Column body={ButtonHerram} header="Herramientas"></Column>
-        </DataTable>
+        <CustomDataTable
+          columns={columns}
+          value={filteredMiembros}
+          paginator={true}
+          rows={5}  // Número de filas por página
+          rowsPerPageOptions={[5, 10, 25, 50]}  // Opciones de filas por página
+        />
       </div>
       <DialogAgregar Visible={agregar} Close={() => setAgregar(false)} Actualizar={Actualizar} />
       <DialogTienda Visible={tienda} Close={() => setTienda(false)} Datos={select} SetDatos={setSelect} Actualizar={fetchMiembros} />

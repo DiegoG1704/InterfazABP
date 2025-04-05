@@ -38,8 +38,9 @@ export default function Login({ onLogin }) {
 
       // Si el login es exitoso, guarda el token y cambia el estado de autenticación
       const token = response.data.access_token;
+      const refresh_token = response.data.refresh_token;
       localStorage.setItem("authToken", token);
-
+      localStorage.setItem("RefreshToken", refresh_token);
       // Llama a onLogin con true para indicar que el usuario está autenticado
       onLogin(true);
 

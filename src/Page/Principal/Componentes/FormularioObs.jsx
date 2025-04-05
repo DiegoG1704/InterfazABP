@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import DialogGrupo from './DialogGrupo';
 import DialogMetodo from './DialogMetodo';
+import axiosToken from '../Herramientas/AxiosToken';
 
 export default function FormularioObs({ Back, Close, datos, setDatos,Actualizar }) {
 
@@ -14,18 +15,13 @@ export default function FormularioObs({ Back, Close, datos, setDatos,Actualizar 
     const[metodo,setMetodo]=useState(false)
 
     const fetchMetodos = async () => {
-        const token = localStorage.getItem("authToken");
+        const axiosInstance = axiosToken();
 
-    if (!token) {
-      console.log("No se encontró token de autenticación.");
-      return;
-    }
+        if (!axiosInstance) {
+            return;
+        }
         try {
-            const response = await axios.get(`https://backendabp.massalud.org.pe/getMetodo`,{
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              });
+            const response = await axiosInstance.get(`/getMetodo`);
             setMetodos(response.data);
         } catch (error) {
             console.log('error', error);
@@ -33,18 +29,13 @@ export default function FormularioObs({ Back, Close, datos, setDatos,Actualizar 
     }
 
     const fetchDistritos = async () => {
-        const token = localStorage.getItem("authToken");
+        const axiosInstance = axiosToken();
 
-    if (!token) {
-      console.log("No se encontró token de autenticación.");
-      return;
-    }
+        if (!axiosInstance) {
+            return;
+        }
         try {
-            const response = await axios.get(`https://backendabp.massalud.org.pe/getGrupos`,{
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              });
+            const response = await axiosInstance.get(`/getGrupos`);
             setDistritos(response.data);
         } catch (error) {
             console.log('error', error);
@@ -73,10 +64,9 @@ export default function FormularioObs({ Back, Close, datos, setDatos,Actualizar 
     };
 
     const handleSubmit = async () => {
-        const token = localStorage.getItem("authToken");
-    
-        if (!token) {
-            console.log("No se encontró token de autenticación.");
+        const axiosInstance = axiosToken();
+
+        if (!axiosInstance) {
             return;
         }
     
@@ -86,14 +76,7 @@ export default function FormularioObs({ Back, Close, datos, setDatos,Actualizar 
             //     ruc: typeof datos.ruc === 'string' ? datos.ruc.trim() : 'Sin RUC', // Verifica si ruc es un string antes de usar trim()
             // };
     
-            const response = await axios.post(`https://backendabp.massalud.org.pe/CreateUsuario`, datos, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-    
-            console.log(response);
-    
+            const response = await axiosInstance.post(`/CreateUsuario`, datos);
             // Limpiar los datos después de enviar
             setDatos({
                 dni: '',

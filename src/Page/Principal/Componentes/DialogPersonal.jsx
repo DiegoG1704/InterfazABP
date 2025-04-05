@@ -3,6 +3,7 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import React, { useState, useEffect } from 'react';
+import axiosToken from '../Herramientas/AxiosToken';
 
 export default function DialogPersonal({ Visible, Close, Datos, Actualizar }) {
     // Usamos un efecto para actualizar los datosP cuando los datos cambian desde el componente padre.
@@ -29,19 +30,14 @@ export default function DialogPersonal({ Visible, Close, Datos, Actualizar }) {
     };
 
     const handleAccept = async () => {
-        const token = localStorage.getItem("authToken");
+        const axiosInstance = axiosToken();
 
-    if (!token) {
-      console.log("No se encontró token de autenticación.");
-      return;
-    }
+        if (!axiosInstance) {
+            return;
+        }
         try {
             // Enviamos los datos editados al servidor usando axios
-            const response = await axios.patch(`https://backendabp.massalud.org.pe/editPersonal/${Datos?.id}`, datosP,{
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              });
+            const response = await axiosInstance.patch(`/editPersonal/${Datos?.id}`, datosP);
 
             // Llamamos a la función Actualizar para refrescar la vista
             Actualizar();
