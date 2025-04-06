@@ -230,19 +230,39 @@ export default function Dashboard() {
   const columns = [
     {
       header: 'Nº',
-      body: (row, { rowIndex }) => rowIndex + 1,  // Mostrar el número de la fila
+      body: (row, { rowIndex }) => rowIndex + 1,
     },
     { header: 'Fecha de Afiliacion', field: 'fechaAfiliacion' },
     { header: 'Codigo', field: 'codigo' },
     { header: 'DNI', field: 'dni' },
     { header: 'Nombres', field: 'nombre' },
     { header: 'Apellidos', field: 'apellido' },
-    { header: 'Estado', body:statusBodyTemplate },
-    { header: 'Pagos', body: ButtonFechas },
-    { header: 'Tienda', body: ButtonTienda },
-    { header: 'Observacion', body: ButtonObs },
-    { header: 'Herramientas', body: ButtonHerram },
-  ];
+    {
+      header: 'Estado',
+      body: statusBodyTemplate,
+      className: 'button-header', // Añadir clase aquí
+    },
+    {
+      header: 'Pagos',
+      body: ButtonFechas,
+      className: 'button-header', // Añadir clase aquí
+    },
+    {
+      header: 'Tienda',
+      body: ButtonTienda,
+      className: 'button-header', // Añadir clase aquí
+    },
+    {
+      header: 'Observacion',
+      body: ButtonObs,
+      className: 'button-header', // Añadir clase aquí
+    },
+    {
+      header: 'Herramientas',
+      body: ButtonHerram,
+      className: 'button-header', // Añadir clase aquí
+    },
+  ];  
 
   return (
     <div className="dashboard-container">
