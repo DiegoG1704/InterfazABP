@@ -23,7 +23,6 @@ export default function DialogAgregar({ Visible, Close, Actualizar }) {
         referencia: '',
         correo: '',
         observaciones: '',
-        codigo:'',
     });
     
     return (

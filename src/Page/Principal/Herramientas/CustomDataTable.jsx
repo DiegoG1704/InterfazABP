@@ -3,7 +3,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 
 const CustomDataTable = ({ columns, paginator, rows, rowsPerPageOptions, ...props }) => (
-  <DataTable {...props} paginator={paginator} rows={rows} rowsPerPageOptions={rowsPerPageOptions}>
+  <DataTable {...props} paginator={paginator} stripedRows rows={rows} rowsPerPageOptions={rowsPerPageOptions}>
     {columns.map((col, idx) => {
       const body = (row, bodyProps) => {
         let element = row[bodyProps.field];
@@ -15,7 +15,7 @@ const CustomDataTable = ({ columns, paginator, rows, rowsPerPageOptions, ...prop
         );
       };
 
-      return <Column key={idx} body={body} {...col} />;
+      return <Column key={idx} sortable body={body} {...col} />;
     })}
   </DataTable>
 );

@@ -12,6 +12,7 @@ export default function Navbar({ Logout }) {
   const submit = () => {
     // Eliminar el 'authToken' del localStorage
     localStorage.removeItem('authToken');
+    localStorage.removeItem('RefreshToken');
     Logout(false);
     navigate('/');
   };
@@ -53,7 +54,6 @@ export default function Navbar({ Logout }) {
         </div>
         <div className="sidebar-links">
           <Link to="/Dashboard">Afiliados</Link>
-          <Link to="/Estadisticas">Estadísticas</Link>
           <Link to="/Estadisticas">Estadísticas</Link>
           {/* Botón de Logout en el sidebar */}
           <Button onClick={submit} severity="danger" outlined className="sidebar-logout-button">Cerrar Sesion</Button>

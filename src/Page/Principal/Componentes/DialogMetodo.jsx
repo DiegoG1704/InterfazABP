@@ -3,6 +3,7 @@ import { Button } from 'primereact/button'
 import { Dialog } from 'primereact/dialog'
 import { InputText } from 'primereact/inputtext'
 import React, { useState } from 'react'
+import axiosToken from '../Herramientas/AxiosToken';
 
 export default function DialogMetodo({Visible,Close,Actualizar}) {
     const [datos, setDatos] = useState({

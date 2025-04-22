@@ -10,16 +10,14 @@ function App() {
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
-  
-    if (!token && isAuthenticated) {
-      setIsAuthenticated(false);
-      console.log("Usuario no autenticado, redirigiendo al login");
-      navigate("/"); // Redirige solo si cambia isAuthenticated
-    } else if (token && !isAuthenticated) {
+
+    if (token) {
       setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
+      navigate("/"); // Redirige al login si no está autenticado
     }
-  }, []);
-  
+  }, [navigate]);
 
   return isAuthenticated ? (
     <PrivateRoute setIsAuthenticated={setIsAuthenticated} />

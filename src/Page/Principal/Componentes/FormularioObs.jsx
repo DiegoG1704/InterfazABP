@@ -1,8 +1,8 @@
 import { Button } from 'primereact/button';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Dropdown } from 'primereact/dropdown';
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState,useRef } from 'react';
+import { Toast } from 'primereact/toast';
 import DialogGrupo from './DialogGrupo';
 import DialogMetodo from './DialogMetodo';
 import axiosToken from '../Herramientas/AxiosToken';
@@ -63,20 +63,23 @@ export default function FormularioObs({ Back, Close, datos, setDatos,Actualizar 
         setDatos({ ...datos, [name]: value });
     };
 
+    const toast = useRef(null);
     const handleSubmit = async () => {
         const axiosInstance = axiosToken();
-
-        if (!axiosInstance) {
-            return;
-        }
+    
+        if (!axiosInstance) return;
     
         try {
-            // const datosConRuc = {
-            //     ...datos,
-            //     ruc: typeof datos.ruc === 'string' ? datos.ruc.trim() : 'Sin RUC', // Verifica si ruc es un string antes de usar trim()
-            // };
-    
             const response = await axiosInstance.post(`/CreateUsuario`, datos);
+    
+            // Mostrar toast de éxito
+            toast.current.show({
+                severity: 'success',
+                summary: 'Registro exitoso',
+                detail: 'El afiliado fue registrado correctamente',
+                life: 3000
+            });
+    
             // Limpiar los datos después de enviar
             setDatos({
                 dni: '',
@@ -93,20 +96,29 @@ export default function FormularioObs({ Back, Close, datos, setDatos,Actualizar 
                 estadoWhatsapp: '',
                 estadoGrupo: '',
                 observaciones: '',
-                codigo: '',
             });
     
-            Close();  // Cierra el formulario o el modal
-            Actualizar();  // Actualiza el estado o la vista
+            Close();      // Cierra el formulario o el modal
+            Actualizar(); // Actualiza la vista o tabla
+    
         } catch (error) {
             console.log('error', error);
+    
+            // Extraer mensaje de error desde el backend si está disponible
+            const errorMsg = error.response?.data?.error || 'Ocurrió un error al registrar al usuario.';
+    
+            // Mostrar toast de error
+            toast.current.show({
+                severity: 'error',
+                summary: 'Error',
+                detail: errorMsg,
+                life: 5000
+            });
         }
     };
-    
-    
-
     return (
         <div className='flex flex-column'>
+            <Toast ref={toast} />
             <div className='flex flex-column'>
                 <strong>Metodo de afiliacion</strong>
                 <div className='p-inputgroup'>

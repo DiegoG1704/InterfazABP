@@ -1,27 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
-import Navbar from './Componentes/Navbar';
+import React, { useState, useEffect, useRef } from 'react';
 import './Styles/Dashboard.css';
 import { Button } from 'primereact/button';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
-import axios from 'axios';
 import DialogAgregar from './Componentes/DialogAgregar';
-import DialogTienda from './Componentes/DialogTienda';
 import DialogFechas from './Componentes/DialogFechas';
-import DialogObservaciones from './Componentes/DialogObservaciones';
 import DialogPersonal from './Componentes/DialogPersonal';
-import ExportExcel from './Componentes/ExportExcel';
 import { InputText } from 'primereact/inputtext';
 import axiosToken from './Herramientas/AxiosToken';
 import CustomDataTable from './Herramientas/CustomDataTable';
+import { Toast } from 'primereact/toast';
+import { useNavigate } from 'react-router-dom';
+import FomularioPers from './Componentes/FomularioPers';
 
 export default function Dashboard() {
+  const toast = useRef(null);
   const [select, setSelect] = useState([]);
   const [agregar, setAgregar] = useState(false);
   const [editPers, setEditPers] = useState(false);
-  const [tienda, setTienda] = useState(false);
-  const [observaciones, setObservaciones] = useState(false);
   const [fechas, setFechas] = useState(false);
   const [miembros, setMiembros] = useState([]);
   const [cantidad, setCantidad] = useState([]);
@@ -30,6 +25,7 @@ export default function Dashboard() {
   const [selectedMember, setSelectedMember] = useState(null);
   const [visibleSuspendConfirm, setVisibleSuspendConfirm] = useState(false);
   const [selectedSuspendMember, setSelectedSuspendMember] = useState(null);
+  const navigate = useNavigate();
 
 
   const fetchMiembrosCount = async () => {
@@ -66,8 +62,6 @@ export default function Dashboard() {
     }
   };
 
-  
-  
   const Actualizar = () => {
     fetchMiembros();  // Refresh members
     fetchMiembrosCount();  // Refresh count
@@ -93,9 +87,22 @@ export default function Dashboard() {
         }
     try {
       await axiosInstance.patch(`/Suspender/${selectedSuspendMember.id}`,{});
+      toast.current.show({
+        severity: 'success',
+        summary: 'Actualizacion exitosa',
+        detail: 'Exito al suspender afiliado',
+        life: 3000
+    });
         Actualizar(); // Refrescar la lista después de la actualización
     } catch (error) {
       console.error('Error al suspender:', error);
+      const errorMsg = error.response?.data?.error || 'Ocurrió un error al suspender al usuario.';
+      toast.current.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: errorMsg,
+          life: 5000
+      });
     } finally {
       setVisibleSuspendConfirm(false);
     }
@@ -112,23 +119,24 @@ export default function Dashboard() {
     try {
       await axiosInstance.patch(`/Reiniciar/${selectedMember.id}`,{});
       Actualizar(); // Refrescar la lista después de la actualización
+      toast.current.show({
+        severity: 'success',
+        summary: 'Actualizacion exitosa',
+        detail: 'Exito al reiniciar estado afiliado',
+        life: 3000
+    });
     } catch (error) {
       console.error('Error al reiniciar:', error);
+      const errorMsg = error.response?.data?.error || 'Ocurrió un error al reiniciar al usuario.';
+      toast.current.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: errorMsg,
+          life: 5000
+      });
     } finally {
       setVisibleConfirm(false); // Cerrar el ConfirmDialog después de la acción
     }
-  };
-
-  const ButtonTienda = (rowData) => {
-    const isSuspendido = rowData.estadoSocio === 'Suspendido';
-    return (
-      <Button
-        onClick={() => { setTienda(true); setSelect(rowData); }}
-        style={{ borderRadius: '50px', background: '#e3cb42', borderColor: '#e3cb42' }}
-        icon="pi pi-shop"
-        disabled={isSuspendido} // Deshabilitar si estado es "Suspendido"
-      />
-    );
   };
 
   const ButtonFechas = (rowData) => {
@@ -138,24 +146,20 @@ export default function Dashboard() {
         onClick={() => { setFechas(true); setSelect(rowData); }}
         style={{ borderRadius: '50px', background: '#6ba4c7', borderColor: '#6ba4c7' }}
         icon="pi pi-calendar"
-        disabled={isSuspendido} // Deshabilitar si estado es "Suspendido"
+        //disabled={isSuspendido} // Deshabilitar si estado es "Suspendido"
       />
     );
   };
 
-  const ButtonObs = (rowData) => {
-    const isSuspendido = rowData.estadoSocio === 'Suspendido';
+  const ButtonDatos = (rowData) => {
     return (
       <Button
-        onClick={() => { setObservaciones(true); setSelect(rowData); }}
-        style={{ borderRadius: '50px', background: '#6bc7a7', borderColor: '#6bc7a7' }}
-        icon="pi pi-eye"
-        disabled={isSuspendido} // Deshabilitar si estado es "Suspendido"
+        style={{ borderRadius: '50px', background: '#182d54', borderColor: '#182d54' }}
+        icon="pi pi-arrow-right"
+        onClick={() => navigate(`/Dashboard/editar/${rowData.id}`, { state: rowData })}
       />
     );
-  };
-  
-
+  };  
 
   const ButtonHerram = (rowData) => {
     const isNuevo = rowData.estadoSocio === 'Nuevo';
@@ -163,12 +167,6 @@ export default function Dashboard() {
     
     return (
       <>
-        <Button
-          onClick={() => { setEditPers(true); setSelect(rowData); }}
-          style={{ borderRadius: '50px', background: '#eb9226', borderColor: '#eb9226' }}
-          icon="pi pi-pen-to-square"
-          disabled={isSuspendido} // Deshabilitar si estado es "Suspendido"
-        />
         <Button
           onClick={() => openConfirmDialog(rowData)}
           style={{ borderRadius: '50px', background: '#04a3bf', borderColor: '#04a3bf' }}
@@ -192,7 +190,8 @@ export default function Dashboard() {
       String(miembro.dni).toLowerCase().includes(lowercasedSearchTerm) ||
       String(miembro.ruc).toLowerCase().includes(lowercasedSearchTerm) ||
       String(miembro.nombre).toLowerCase().includes(lowercasedSearchTerm) ||
-      String(miembro.apellido).toLowerCase().includes(lowercasedSearchTerm)
+      String(miembro.apellido).toLowerCase().includes(lowercasedSearchTerm)||
+      String(miembro.codigo).toLowerCase().includes(lowercasedSearchTerm)
     );
   });
 
@@ -232,7 +231,6 @@ export default function Dashboard() {
       header: 'Nº',
       body: (row, { rowIndex }) => rowIndex + 1,
     },
-    { header: 'Fecha de Afiliacion', field: 'fechaAfiliacion' },
     { header: 'Codigo', field: 'codigo' },
     { header: 'DNI', field: 'dni' },
     { header: 'Nombres', field: 'nombre' },
@@ -248,24 +246,16 @@ export default function Dashboard() {
       className: 'button-header', // Añadir clase aquí
     },
     {
-      header: 'Tienda',
-      body: ButtonTienda,
-      className: 'button-header', // Añadir clase aquí
-    },
-    {
-      header: 'Observacion',
-      body: ButtonObs,
-      className: 'button-header', // Añadir clase aquí
-    },
-    {
       header: 'Herramientas',
       body: ButtonHerram,
       className: 'button-header', // Añadir clase aquí
     },
+    { header: 'Datos', body:ButtonDatos },
   ];  
 
   return (
     <div className="dashboard-container">
+      <Toast ref={toast} />
       <div className="dashboard-content">
         <h1>Bienvenido a la Interfaz de Usuario de ABP</h1>
         <div className='cantidad'>
@@ -280,7 +270,7 @@ export default function Dashboard() {
           onChange={(e) => setSearchTerm(e.target.value)}  // Actualizar el término de búsqueda
         />
         <div className='Aplicaciones'>
-        <ExportExcel data={miembros} /> {/* Agregar el componente ExportExcel */}
+          <Button onClick={()=>setEditPers(true)} icon='pi pi-filter' label='Exportar' style={{background:'#6b96c7',borderColor:'#6b96c7'}}/>
           <Button
             label='+Agregar'
             style={{ background: 'white', color: 'black', borderColor: 'white' }}
@@ -297,11 +287,9 @@ export default function Dashboard() {
           rowsPerPageOptions={[5, 10, 25, 50]}  // Opciones de filas por página
         />
       </div>
+      <DialogPersonal Visible={editPers} Close={()=>setEditPers(false)} Datos={miembros}/>
       <DialogAgregar Visible={agregar} Close={() => setAgregar(false)} Actualizar={Actualizar} />
-      <DialogTienda Visible={tienda} Close={() => setTienda(false)} Datos={select} SetDatos={setSelect} Actualizar={fetchMiembros} />
       <DialogFechas Visible={fechas} Close={() => setFechas(false)} Datos={select} Actualizar={fetchMiembros}/>
-      <DialogObservaciones Visible={observaciones} Close={() => setObservaciones(false)} Datos={select} SetDatos={setSelect} Actualizar={fetchMiembros} />
-      <DialogPersonal Visible={editPers} Close={() => setEditPers(false)} Datos={select} Actualizar={fetchMiembros} />
       <ConfirmDialog
         visible={visibleConfirm}
         onHide={() => setVisibleConfirm(false)}

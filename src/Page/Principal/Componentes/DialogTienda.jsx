@@ -6,8 +6,10 @@ import { InputText } from 'primereact/inputtext';
 import React, { useEffect, useState } from 'react';
 import axiosToken from '../Herramientas/AxiosToken';
 import { data } from 'react-router-dom';
+import DialogDistrito from './DialogDistrito';
 
 export default function DialogTienda({ Visible, Close, Datos, SetDatos, Actualizar }) {
+  const [nuevodist,setNuevodist]=useState(false)
   const [isEditable, setIsEditable] = useState({
     nombreBodega: false,
     direccion: false,
@@ -227,13 +229,14 @@ export default function DialogTienda({ Visible, Close, Datos, SetDatos, Actualiz
               optionLabel="nombre"
               optionValue="id"
               name="distritoId"
-              style={{ width: '15rem' }}
+              style={{ width: '11.5rem' }}
               onChange={(e) => handleInputChange(e, 'distritoId')}
               placeholder="Seleccione distrito..."
               value={Datos.distritoId}
               filter
               disabled={!isEditable.distritoId}
             />
+            <Button onClick={()=>setNuevodist(true)} className="p-button-text"><i className="pi pi-plus-circle" style={{ color: '#6ba4c7',fontSize:'1.3rem' }}></i></Button>
             {editingField !== 'distritoId' ? (
               <Button
                 icon="pi pi-pencil"
@@ -326,6 +329,11 @@ export default function DialogTienda({ Visible, Close, Datos, SetDatos, Actualiz
           )}
         </div>
       </div>
+      <DialogDistrito
+        Visible={nuevodist}
+        Close={()=>setNuevodist(false)}
+        Actualizar={fetchDistritos}
+      />
     </Dialog>
   );
 }

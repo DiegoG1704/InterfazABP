@@ -4,9 +4,11 @@ import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import React, { useEffect, useState } from 'react';
 import axiosToken from '../Herramientas/AxiosToken';
+import DialogDistrito from './DialogDistrito';
 
 export default function FormulalarioTien({ Back, Next, datos, setDatos }) {
     const [distritos, setDistritos] = useState([]);
+    const [nuevodist,setNuevodist]=useState(false)
 
     const fetchDistritos = async () => {
         const axiosInstance = axiosToken();
@@ -59,60 +61,70 @@ export default function FormulalarioTien({ Back, Next, datos, setDatos }) {
     };
 
     return (
-        <div className='flex flex-column'>
+        <>
             <div className='flex flex-column'>
-                <strong>Ruc(Opcional)</strong>
-                <InputText
-                    name='ruc'
-                    onChange={handleChange}
-                    value={datos.ruc}
-                    placeholder='Ingrese su ruc...'
-                />
+                <div className='flex flex-column'>
+                    <strong>Ruc(Opcional)</strong>
+                    <InputText
+                        name='ruc'
+                        onChange={handleChange}
+                        value={datos.ruc}
+                        placeholder='Ingrese su ruc...'
+                    />
+                </div>
+                <div className='flex flex-column'>
+                    <strong>Nombre de bodega</strong>
+                    <InputText
+                        name='nombreBodega'
+                        onChange={handleChange}
+                        value={datos.nombreBodega}
+                        placeholder='Ingrese su nombre de tienda...'
+                    />
+                </div>
+                <div className='flex flex-column'>
+                    <strong>Distrito</strong>
+                    <div className='p-inputgroup'>
+                        <Dropdown
+                            options={distritos}
+                            optionLabel='nombre'
+                            onChange={(e) => handleLocalChange(e, 'distritoId')}
+                            placeholder='Seleccione distrito...'
+                            value={distritos.find(d => d.id === datos.distritoId)} // Asignamos el objeto completo basado en el id
+                            filter
+                            valueTemplate={districtValueTemplate} // Personalizamos cómo se muestra el valor seleccionado
+                            itemTemplate={districtItemTemplate} // Personalizamos cómo se muestra cada opción
+                        />
+                        <Button label='Agregar' onClick={()=>setNuevodist(true)} className="p-button-primary p-button-base p-inputtext-base" severity="info"/>
+                    </div>
+                </div>
+                <div className='flex flex-column'>
+                    <strong>Direccion</strong>
+                    <InputText
+                        name='direccion'
+                        onChange={handleChange}
+                        value={datos.direccion}
+                        placeholder='Ingrese su direccion...'
+                    />
+                </div>
+                <div className='flex flex-column'>
+                    <strong>Referencia</strong>
+                    <InputText
+                        name='referencia'
+                        onChange={handleChange}
+                        value={datos.referencia}
+                        placeholder='Ingrese su correo...'
+                    />
+                </div>
+                <div className='flex pt-4 justify-content-between'>
+                    <Button label='Regresar' severity="info" icon='pi pi-arrow-left' onClick={Back} />
+                    <Button className="p-button-success p-button-base"  label='Siguiente' iconPos='right' icon='pi pi-arrow-right' onClick={handleSubmit} />
+                </div>
             </div>
-            <div className='flex flex-column'>
-                <strong>Nombre de bodega</strong>
-                <InputText
-                    name='nombreBodega'
-                    onChange={handleChange}
-                    value={datos.nombreBodega}
-                    placeholder='Ingrese su nombre de tienda...'
-                />
-            </div>
-            <div className='flex flex-column'>
-                <strong>Distrito</strong>
-                <Dropdown
-                    options={distritos}
-                    optionLabel='nombre'
-                    onChange={(e) => handleLocalChange(e, 'distritoId')}
-                    placeholder='Seleccione distrito...'
-                    value={distritos.find(d => d.id === datos.distritoId)} // Asignamos el objeto completo basado en el id
-                    filter
-                    valueTemplate={districtValueTemplate} // Personalizamos cómo se muestra el valor seleccionado
-                    itemTemplate={districtItemTemplate} // Personalizamos cómo se muestra cada opción
-                />
-            </div>
-            <div className='flex flex-column'>
-                <strong>Direccion</strong>
-                <InputText
-                    name='direccion'
-                    onChange={handleChange}
-                    value={datos.direccion}
-                    placeholder='Ingrese su direccion...'
-                />
-            </div>
-            <div className='flex flex-column'>
-                <strong>Referencia</strong>
-                <InputText
-                    name='referencia'
-                    onChange={handleChange}
-                    value={datos.referencia}
-                    placeholder='Ingrese su correo...'
-                />
-            </div>
-            <div className='flex pt-4 justify-content-between'>
-                <Button label='Regresar' severity="info" icon='pi pi-arrow-left' onClick={Back} />
-                <Button className="p-button-success p-button-base"  label='Siguiente' iconPos='right' icon='pi pi-arrow-right' onClick={handleSubmit} />
-            </div>
-        </div>
+            <DialogDistrito
+                Visible={nuevodist}
+                Close={()=>setNuevodist(false)}
+                Actualizar={fetchDistritos}
+            />
+        </>
     );
 }

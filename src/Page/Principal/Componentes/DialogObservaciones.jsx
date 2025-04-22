@@ -3,11 +3,16 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { InputTextarea } from 'primereact/inputtextarea'
 import axiosToken from '../Herramientas/AxiosToken';
+import DialogGrupo from './DialogGrupo';
+import DialogMetodo from './DialogMetodo';
+import { Toast } from 'primereact/toast';
 
 export default function DialogObservaciones({Visible,Close,Datos,SetDatos,Actualizar}) {
+  const[grupo,setGrupo]=useState(false)
+  const[metodo,setMetodo]=useState(false)
   const [isEditable, setIsEditable] = useState({
       estadoGrupo: false,
       metodoAfiliacion:false,
@@ -81,7 +86,7 @@ export default function DialogObservaciones({Visible,Close,Datos,SetDatos,Actual
         }));
       }
     };
-    
+    const toast = useRef(null);
     const saveChanges = async (field) => {
       const campoYValor = {
         campo: field,
@@ -96,6 +101,12 @@ export default function DialogObservaciones({Visible,Close,Datos,SetDatos,Actual
       }
       try {
         const response = await axiosInstance.patch(`/editCampo/${Datos.id}`, campoYValor);
+        toast.current.show({
+          severity: 'success',
+          summary: 'Actualizacion exitosa',
+          detail: 'Exito al actualizar campo',
+          life: 3000
+      });
         setIsEditable((prev) => ({
           ...prev,
           [field]: false,
@@ -104,6 +115,13 @@ export default function DialogObservaciones({Visible,Close,Datos,SetDatos,Actual
         Actualizar(); // Actualizamos el estado
       } catch (error) {
         console.log('error', error);
+        const errorMsg = error.response?.data?.error || 'Ocurrió un error al registrar al usuario.';
+        toast.current.show({
+            severity: 'error',
+            summary: 'Error',
+            detail: errorMsg,
+            life: 5000
+        });
       }
     };
     
@@ -111,22 +129,24 @@ export default function DialogObservaciones({Visible,Close,Datos,SetDatos,Actual
   return (
     <div>
         <Dialog visible={Visible} onHide={Close} header='Observaciones'>
+          <Toast ref={toast} />
             <div className='flex flex-column'>
               <div className='flex flex-column'>
                 <strong>Grupo</strong>
-                <div className="flex justify-content-between">
+                <div className="flex">
                 <Dropdown
                   name='estadoGrupo' 
                   value={Datos.estadoGrupo}  // Solo asignamos el 'id', no el objeto completo
                   onChange={(e) => handleInputChange(e, 'estadoGrupo')}
                   options={distritos}
-                  style={{width:'100%'}}
+                  style={{width:'10rem'}}
                   optionLabel="nombre"  // Mostrar el 'nombre' del grupo
                   optionValue="id"  // Enviar solo el 'id' de la opción seleccionada
                   placeholder="Seleccione grupo..."
                   disabled={!isEditable.estadoGrupo} 
                   filter
                 />
+                <Button onClick={()=>setGrupo(true)} className="p-button-text"><i className="pi pi-plus-circle" style={{ color: '#6ba4c7',fontSize:'1.5rem' }}></i></Button>
 
                   {editingField !== 'estadoGrupo' ? (
                     <Button
@@ -147,12 +167,12 @@ export default function DialogObservaciones({Visible,Close,Datos,SetDatos,Actual
               </div>
               <div className='flex flex-column'>
                 <strong>Metodo de Afiliacion</strong>
-                <div className="flex justify-content-between">
+                <div className="flex">
                 <Dropdown
                     name='metodoAfiliacion'
                     optionLabel="nombre"
                     optionValue="id"  // Enviar solo el 'id' de la opción seleccionada
-                    style={{width:'100%'}}
+                    style={{width:'10rem'}}
                     value={Datos.metodoAfiliacion}  // Aquí buscamos el objeto completo
                     onChange={(e) => handleInputChange(e, 'metodoAfiliacion')}
                     options={Metodos}
@@ -160,6 +180,7 @@ export default function DialogObservaciones({Visible,Close,Datos,SetDatos,Actual
                     disabled={!isEditable.metodoAfiliacion} 
                     filter
                 />
+                <Button onClick={()=>setMetodo(true)} className="p-button-text"><i className="pi pi-plus-circle" style={{ color: '#6ba4c7',fontSize:'1.5rem' }}></i></Button>
                 {editingField !== 'metodoAfiliacion' ? (
                     <Button
                       icon="pi pi-pencil"
@@ -179,13 +200,13 @@ export default function DialogObservaciones({Visible,Close,Datos,SetDatos,Actual
               </div>
               <div className='flex flex-column'>
               <strong>Observaciones</strong>
-              <div className="flex justify-content-between">
+              <div className="flex">
                 <InputTextarea 
                 name='observaciones'
                 value={Datos.observaciones}
                 disabled={!isEditable.observaciones} 
                 onChange={(e) => handleInputChange(e, 'observaciones')}
-                style={{height:'10rem'}}
+                style={{height:'10rem',width:'14rem'}}
                 />
                 {editingField !== 'observaciones' ? (
                     <Button
@@ -206,6 +227,16 @@ export default function DialogObservaciones({Visible,Close,Datos,SetDatos,Actual
               </div>
             </div>  
         </Dialog>
+        <DialogGrupo
+          Visible={grupo}
+          Close={()=>setGrupo(false)}
+          Actualizar={fetchDistritos}
+          />
+        <DialogMetodo
+          Visible={metodo}
+          Close={()=>setMetodo(false)}
+          Actualizar={fetchMetodos}
+          />
     </div>
   )
 }

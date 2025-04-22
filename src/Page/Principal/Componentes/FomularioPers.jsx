@@ -57,19 +57,6 @@ export default function FomularioPers({ Next, datos, setDatos }) {
     return (
         <div className='p-fluid'>
             <div className='p-grid p-align-center'>
-            <div className='p-mb-4'>
-                <label htmlFor="nombre"><strong>Código</strong></label>
-                <InputText 
-                    id="codigo"
-                    placeholder='Ingrese el código...'
-                    name='codigo'
-                    value={datos.codigo}
-                    onChange={(e) => handleCodigoChange(e)}  // Llamar a la función handleCodigoChange
-                    className="p-inputtext-base"
-                    maxLength={4}  // Limitar a 4 caracteres
-                />
-            </div>
-
                 <div className='p-col-12 p-md-6'>
                     <div className='p-mb-4'>
                         <label htmlFor="dni"><strong>DNI</strong></label>
