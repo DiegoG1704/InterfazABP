@@ -5,6 +5,7 @@ import { Dialog } from 'primereact/dialog'
 import FomularioPers from "./FomularioPers";
 import FormulalarioTien from "./FormulalarioTien";
 import FormularioObs from "./FormularioObs";
+import CustomDialog from "../../../components/Dialog/CustomDialog";
 
 export default function DialogAgregar({ Visible, Close, Actualizar }) {
     const stepperRef = useRef(null);
@@ -26,12 +27,14 @@ export default function DialogAgregar({ Visible, Close, Actualizar }) {
     });
     
     return (
-        <Dialog 
+        <CustomDialog 
             visible={Visible} 
-            onHide={Close} 
-            header="Agregar Usuario" 
+            onhide={Close} 
+            title="Agregar Usuario" 
             style={{ width: '32vw', minWidth: '450px' }} // Tamaño de la ventana
-            footer={null} // Desactivar el pie de página por defecto
+            footer={<></>} // Desactivar el pie de página por defecto
+            iconClassName={"pi pi-user-plus"} // Icono de la ventana
+
         >
             <div className="card flex justify-content-center">
                 <Stepper 
@@ -74,6 +77,6 @@ export default function DialogAgregar({ Visible, Close, Actualizar }) {
                     </StepperPanel>
                 </Stepper>
             </div>
-        </Dialog>
+        </CustomDialog >
     );
 }

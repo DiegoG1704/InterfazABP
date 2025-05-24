@@ -1,0 +1,73 @@
+.customTableContainer  .p-inputtext, .p-dropdown, .p-inputtextarea {
+    width: 50px!important;
+    padding: 0px;
+    border-radius: 0px;
+    
+  }
+/* CustomTable.module.css */
+.customTableContainer :global(.p-datatable .p-datatable-thead > tr > th) {
+  background-color: #ffffff; /* Cambia este color */
+  color: #6C88F1;
+  font-weight: bold;
+  text-align: center;
+}
+.customTableContainer{
+  background-color: #ffffff;
+  padding:15px;
+  border-radius: 30px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+.customTableHeader{
+  background-color:#ffffff;
+  margin: 10px 0px 30px 0px;
+  padding: 20px;
+  border-radius: 20px;
+  width: 100%;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  /* max-width: 700px; */
+}
+.header-icon{
+  color: #6E7B9B;
+  margin-right: 4px;
+ 
+}
+.header-title-filter{
+  color: #6E7B9B!important;
+  font-size: 1.2em; 
+
+}
+.customTableHeaderFilterBox{
+  border: 2px solid #6C88F1;
+  
+  
+  position: relative!important;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  /* width: max-content; */
+  padding: 0px 20px;
+  height: 80px;
+  max-width: 400px;
+  width: 100%;
+}
+.customTableHeaderFilterBox::before{
+  content: "Buscar en todos los campos";
+  position: absolute;
+  top: -13px;
+  left: 20px;
+ 
+  background-color: #ffffff;
+  border-radius: 20px;
+  color: #6C88F1;
+
+}
+.customTableHeaderFilterInput{
+  margin-top: 18px;
+ 
+}
+.customTableHeader  input{
+
+ width: 350px;
+  
+ 
+}

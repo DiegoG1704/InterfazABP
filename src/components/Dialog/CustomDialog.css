@@ -1,0 +1,28 @@
+.p-dialog-header{
+    border-radius:20px 20px 0px 0px;
+    /* background: linear-gradient(to right, #4ade80, #16a34a); */
+    color: #4462CF!important ;
+    padding: 16px;
+   
+    font-size: 20px!important;
+}
+.p-dialog{
+    border-radius: 30px;
+}
+.p-dialog-content{
+    border-radius:0px 0px 0px 0px;
+}
+.p-dialog-footer{
+    border-radius:0px 0px 30px 30px;
+}
+.p-dialog-header-close{
+
+    color:#4462CF;
+}
+.p.p-dialog-header i {
+    color: #4462CF!important ;
+
+}
+.header-icon{
+    color: #4462CF!important;
+}

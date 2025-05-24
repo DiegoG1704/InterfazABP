@@ -70,12 +70,21 @@
   }
   
   /* Inputs y dropdowns más limpios */
-  .p-inputtext, .p-dropdown, .p-inputtextarea {
-    width: 100%;
+ .p-dropdown, .p-inputtextarea {
+    /* width: 100%; */
     padding: 0.6rem;
     border-radius: 8px;
+
   }
-  
+  .editar-input-row > .p-inputtext {
+    width: 100%;
+  }
+  .editar-input-row >  .p-dropdown{
+    width: 100%;
+  }
+  .editar-input-row > .p-inputtextarea{
+    width: 100%;
+  }
   .p-button-text {
     padding: 0.4rem 0.6rem;
   }

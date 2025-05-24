@@ -1,0 +1,163 @@
+.dialogContent {
+    padding: 0 1rem 1rem 1rem;
+  }
+  
+  /* TabView Styles */
+  .tabView {
+    margin-bottom: 1rem;
+  }
+  
+  .tabView .p-tabview-nav {
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .tabView .p-tabview-nav li .p-tabview-nav-link {
+    color: #6c757d;
+    padding: 1rem;
+    font-weight: 500;
+    border: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    margin-right: 1rem;
+  }
+  
+  .tabView .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+    color: #4462cf;
+    border-bottom: 2px solid #4462cf;
+    background: transparent;
+  }
+  
+  .tabView .p-tabview-panels {
+    padding: 1.5rem 0 0 0;
+  }
+  
+  /* DataTable Styles */
+  .dataTable {
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .dataTable .p-datatable-header {
+    background: white;
+    border: none;
+    padding: 1rem 0;
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .dataTable .p-datatable-thead > tr > th {
+    background: white;
+    color: #6c757d;
+    font-weight: 600;
+    padding: 1rem;
+    border: none;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .dataTable .p-datatable-tbody > tr {
+    background: white;
+    transition: all 0.2s;
+  }
+  
+  .dataTable .p-datatable-tbody > tr > td {
+    padding: 1rem;
+    border: none;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .column {
+    color: #495057;
+  }
+  
+  /* Status Styles */
+  .pagado {
+    background-color: #e6f7e6;
+    color: #16a34a;
+    padding: 0.25rem 0.5rem;
+    border-radius: 14px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    /* width: 400px!important; */
+  }
+  
+  .pendiente {
+    background-color: #ffebeb;
+    color: #ef4444;
+    padding: 0.25rem 0.5rem;
+    border-radius: 14px;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  .programado {
+    
+    background-color:#17b2f535;
+    color: #17B3F5;
+    padding: 0.25rem 0.5rem;
+    border-radius: 14px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    /* min-width: 160px; */
+  }
+  /* Button Styles */
+  .createButton {
+    background-color: #4462cf;
+    border-color: #4462cf;
+  }
+  
+  .createButton:hover {
+    background-color: #3a56b9;
+    border-color: #3a56b9;
+  }
+  
+  .payButton {
+    background-color: #10b981;
+    border-color: #10b981;
+  }
+  
+  .payButton:hover {
+    background-color: #0ea271;
+    border-color: #0ea271;
+  }
+  
+  .actionButton {
+    background: transparent;
+    border: none;
+    color: #6c757d;
+  }
+  
+  .actionButton:hover {
+    background: #f8f9fa;
+    color: #4462cf;
+  }
+  
+  /* Paginator Styles */
+  .paginator {
+    background: white;
+    border: none;
+    padding: 1rem 0;
+    
+  }
+  
+  .paginator .p-paginator-page {
+    min-width: 2.5rem;
+    height: 2.5rem;
+    margin: 0 0.125rem;
+    border-radius: 50%;
+  }
+  
+  .paginator .p-paginator-page.p-highlight {
+    background: #4462cf;
+    color: white;
+  }
+  
+  .paginatorText {
+    margin: 0 0.25rem;
+  }
+  .tableHeader{
+    
+    display: flex;
+    justify-content: end;
+  }
+  .p-dropdown.p-component.p-inputwrapper.p-inputwrapper-filled{
+    width: 100px!important;
+  }

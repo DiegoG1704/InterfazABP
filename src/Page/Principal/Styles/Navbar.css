@@ -4,7 +4,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #182d54; /* Un amarillo brillante */
+  background:linear-gradient(to right,#0a2a5c,#173776);
   padding: 1rem 2rem;
   color: white;
   width: 100%;
@@ -41,9 +41,16 @@
 .nav-links a {
   text-decoration: none;
   color: white;
-  font-size: 1.2rem;
+  font-size: 1em;
   transition: color 0.3s ease;
+  
+  height: min-content;
 }
+.navbar-link{
+  display: flex;
+  align-items: center;
+}
+
 
 .nav-links a:hover {
   color: #728cbd;
@@ -148,6 +155,16 @@
   align-items: center; /* Centra el texto verticalmente */
   padding: 10px 0; /* Añadimos algo de relleno para darle altura al botón */
   text-align: center; /* Asegura que el texto esté centrado */
+}
+.btn-sign-out{
+ background: linear-gradient(to right, #ec3f3f, #dd2828);
+  color: white;
+  border: none; /* Sin borde */
+  cursor: pointer; /* Cambia el cursor al pasar por encima */
+  border-radius: 30px;
+  font-size: 13px;
+  width: 170px;
+
 }
 /* Responsive: En pantallas pequeñas */
 @media (max-width: 768px) {
