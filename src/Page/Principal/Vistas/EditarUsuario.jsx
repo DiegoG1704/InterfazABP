@@ -21,6 +21,7 @@ export default function EditarUsuario() {
   const [grupo, setGrupo] = useState(false)
   const [metodo, setMetodo] = useState(false)
   // const { state } = useLocation()
+  const [telefonosEditados, setTelefonosEditados] = useState({});
   const [Datos, SetDatos] = useState({})
   const { id } = useParams()
   const [activeTab, setActiveTab] = useState("personal")
@@ -155,23 +156,35 @@ export default function EditarUsuario() {
     }
   }
 
-  const EditTelefono = async (telefonoId) => {
-    const axiosInstance = axiosToken()
-    if (!axiosInstance) return
-    
+const EditTelefono = async (telefonoId) => {
+  const axiosInstance = axiosToken();
+  if (!axiosInstance) return;
+
+  const nuevoNumero = telefonosEditados[telefonoId];
     try {
-      const response = await axiosInstance.put(`/Editartelefono/${Datos.id}/${telefonoId}`, { numero })
-      console.log("Éxito")
-      setIsEditable((prev) => ({
+      await axiosInstance.put(`/Editartelefono/${Datos.id}/${telefonoId}`, { numero: nuevoNumero });
+
+      SetDatos((prev) => ({
         ...prev,
-        telefono: false,
-      }))
-      setEditingField(null)
-      setNumero("")
+        telefonos: prev.telefonos.map((tel) =>
+          tel.id === telefonoId ? { ...tel, numero: nuevoNumero } : tel
+        ),
+      }));
+
+      // Limpia el estado temporal y UI
+      setTelefonosEditados((prev) => {
+        const nuevos = { ...prev };
+        delete nuevos[telefonoId];
+        return nuevos;
+      });
+
+      setIsEditable((prev) => ({ ...prev, telefono: false }));
+      setEditingField(null);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
+
 
   const deleteTelefono = async (telefonoId) => {
     const axiosInstance = axiosToken()
@@ -202,10 +215,6 @@ export default function EditarUsuario() {
     }
   };
   useEffect(() => {
-    // fetchDistritos()
-    // fetchMetodos()
-    // fetchGrupos()
-    // fetchAffiliate()
     loadData()
   }, [])
 
@@ -229,11 +238,6 @@ export default function EditarUsuario() {
     { id: "store", label: "Información de Tienda", icon: "pi pi-building" },
     { id: "affiliation", label: "Afiliación", icon: "pi pi-users" },
   ]
-
-  // if (!Datos) {
-  //   return <div>No se recibieron datos del usuario.</div>
-  // }
-
 
   return (
     <div className={styles.container}>
@@ -586,9 +590,15 @@ export default function EditarUsuario() {
                         Datos.telefonos.map((telefono, index) => (
                           <div key={index} className={styles.phoneItem}>
                             <InputText
-                              value={telefono.numero}
                               disabled={!isEditable.telefono}
-                              onChange={(e) => setNumero(e.target.value)}
+                              value={isEditable.telefono ? (telefonosEditados[telefono.id] ?? telefono.numero) : telefono.numero}
+                              onChange={(e) => {
+                                const nuevoNumero = e.target.value;
+                                setTelefonosEditados((prev) => ({
+                                  ...prev,
+                                  [telefono.id]: nuevoNumero,
+                                }));
+                              }}
                               className={styles.input}
                             />
                             {editingField !== "telefono" ? (

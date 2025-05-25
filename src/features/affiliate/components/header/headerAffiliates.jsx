@@ -2,6 +2,7 @@ import styles from "./headerAffiliates.module.css"; // Asegúrate de que el arch
 import { Users, UserCheck, UserX, TrendingUp } from "lucide-react"
 
 const HeaderAffiliates = ({ cntAfiliados, cntActive, cntInactive }) => {
+    const totalAffiliates = Number(cntActive) + Number(cntInactive);
     return (
         <header className={styles.header}>
             <h3 className={styles.title}>Panel de Control ABP</h3>
@@ -11,7 +12,7 @@ const HeaderAffiliates = ({ cntAfiliados, cntActive, cntInactive }) => {
 
                     <div>
                         <h4 className={styles.cardTitle}>Total de Afiliados</h4>
-                        <p className={`${styles.cardValue} ${styles.CardValueAf}`}>{cntAfiliados}</p>
+                        <p className={`${styles.cardValue} ${styles.CardValueAf}`}>{totalAffiliates}</p>
                     </div>
                     <div>
                         <div>
