@@ -57,6 +57,13 @@
     border-color: #007bff;
     width: 350px;
   }
+  .Aplicaciones{
+  
+    width: 100%;
+    display: flex;
+    justify-content: end;
+    gap: 20px;
+  }
 
   @media (max-width: 850px) {
     .dashboard-content {

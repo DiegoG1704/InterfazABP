@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import axiosToken from '../Herramientas/AxiosToken';
 import { useRef } from 'react';
 import { Toast } from 'primereact/toast';
+import CustomDialog from '../../../components/Dialog/CustomDialog';
 
 export default function DialogDistrito({ Visible, Close, Actualizar }) {
     const [datos, setDatos] = useState({
@@ -51,7 +52,7 @@ export default function DialogDistrito({ Visible, Close, Actualizar }) {
     }
 
     return (
-        <Dialog visible={Visible} onHide={Close} header="Agregar Distrito" style={{ width: '30vw' }} className="p-fluid">
+        <CustomDialog visible={Visible} onhide={Close} title={"Agregar Distrito"} style={{ width: '30vw' }}  footer={<></>} iconClassName="pi pi-map-marker"> 
             <Toast ref={toast} />
             <div className="p-4 flex flex-column gap-3">
                 <div>
@@ -87,6 +88,6 @@ export default function DialogDistrito({ Visible, Close, Actualizar }) {
                     <Button label="Aceptar" className="p-button-primary" onClick={handleSubmit} />
                 </div>
             </div>
-        </Dialog>
+        </CustomDialog>
     );
 }

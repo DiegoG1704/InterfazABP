@@ -50,5 +50,7 @@ const axiosToken = () => {
 
   return instance;
 };
+const axiosTokenInstance = axiosToken();
 
 export default axiosToken;
+export {axiosTokenInstance}

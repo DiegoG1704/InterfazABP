@@ -173,6 +173,7 @@ export default function DialogTienda({ Visible, Close, Datos, SetDatos, Actualiz
               value={Datos.nombreBodega}
               disabled={!isEditable.nombreBodega}
               onChange={(e) => handleInputChange(e, 'nombreBodega')}
+              className='custom-input'
             />
             {editingField !== 'nombreBodega' ? (
               <Button
