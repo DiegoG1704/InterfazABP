@@ -13,7 +13,7 @@ import autoTable from 'jspdf-autotable';
 
 export default function DialogPersonal({ Visible, Close, Datos }) {
     const [afiliados, setAfiliados] = useState({
-        estado: null,
+        estado: [], // Cambiado a array
         departamento: [],
         distrito: []
     });    
@@ -47,86 +47,98 @@ export default function DialogPersonal({ Visible, Close, Datos }) {
         { name: "Suspendido", id: 26 }
       ]
 
-      const [distritos, setDistritos] = useState([]);
-      const fetchDistritos = async () => {
+    const [distritos, setDistritos] = useState([]);
+    const fetchDistritos = async () => {
         const axiosInstance = axiosToken();
-
-        if (!axiosInstance) {
-            return;
-        }
+        if (!axiosInstance) return;
         try {
             const response = await axiosInstance.get(`/distritos`);
             setDistritos(response.data);
         } catch (error) {
             console.log('error', error);
         }
-    }
+    };
 
     useEffect(() => {
         fetchDistritos();
     }, []);
 
-    const Estados =[
-        {name:'Nuevo',id:1},
-        {name:'Renovo',id:2},
-        {name:'Suspendido',id:3},
-    ]
+    const Estados = [
+        { name: 'Nuevo', id: 1 },
+        { name: 'Renovo', id: 2 },
+        { name: 'Suspendido', id: 3 },
+    ];
 
     const generarPDF = () => {
         const doc = new jsPDF();
-    
+
         const datosFiltrados = Datos.filter(item => {
             const cumpleEstado =
-                !afiliados.estado ||
-                item.estadoSocio?.toLowerCase() === Estados.find(e => e.id === afiliados.estado)?.name.toLowerCase();
-    
+                afiliados.estado.length === 0 ||
+                afiliados.estado.some(id =>
+                    item.estadoSocio?.toLowerCase() === Estados.find(e => e.id === id)?.name.toLowerCase()
+                );
+
             const cumpleDistrito =
                 afiliados.distrito.length === 0 || afiliados.distrito.includes(item.distritoId);
-    
+
             const cumpleDepartamento =
                 afiliados.departamento.length === 0 ||
                 afiliados.departamento.includes(
                     Departamentos.find(dep => dep.name.toLowerCase() === item.departamento?.toLowerCase())?.id
                 );
-    
+
             return cumpleEstado && cumpleDistrito && cumpleDepartamento;
         });
-    
+
         const totalAfiliados = datosFiltrados.length;
-    
+
         doc.setFontSize(14);
         doc.text("Reporte de Afiliados", 14, 20);
-    
-        doc.setFontSize(18);
+        doc.setFontSize(12);
         doc.text(`Total: ${totalAfiliados}`, 180, 20, { align: 'right' });
-    
-        const rows = datosFiltrados.map(d => [d.dni, d.nombre, d.apellido]);
-    
+
+        // Agrupar por distrito y contar
+        const conteoPorDistrito = {};
+        datosFiltrados.forEach(d => {
+            const nombreDistrito = d.distrito || 'Sin distrito';
+            if (!conteoPorDistrito[nombreDistrito]) {
+                conteoPorDistrito[nombreDistrito] = 0;
+            }
+            conteoPorDistrito[nombreDistrito]++;
+        });
+
+        const resumenDistrito = Object.entries(conteoPorDistrito)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([distrito, cantidad]) => [distrito, cantidad]);
+
+        // Tabla de resumen
         autoTable(doc, {
-            head: [['DNI', 'Nombres', 'Apellidos']],
-            body: rows,
+            head: [['Distrito', 'Cantidad de Afiliados']],
+            body: resumenDistrito,
             startY: 30
         });
-    
-        doc.save('reporte_afiliados.pdf');
-    
-        // Limpiar filtros al final
+
+        // Tabla de detalle
+        const detalleY = doc.lastAutoTable.finalY + 10;
+        autoTable(doc, {
+            head: [['DNI', 'Nombres', 'Apellidos']],
+            body: datosFiltrados.map(d => [d.dni, d.nombre, d.apellido]),
+            startY: detalleY
+        });
+
+        doc.save('reporte.pdf');
+
+        // Limpiar filtros
         setAfiliados({
-            estado: null,
+            estado: [],
             departamento: [],
             distrito: []
         });
     };
-    
 
-    // Para Dropdown (valor único)
-    const handleDropdownChange = (e, field) => {
-        setAfiliados({ ...afiliados, [field]: e.value ? e.value.id : null });
-    };    
-
-    // Para MultiSelect (múltiples valores)
+    // Cambiar MultiSelect
     const handleMultiSelectChange = (e, field) => {
-        // Aquí puedes guardar los IDs solamente si prefieres, o los objetos seleccionados
         const selectedIds = e.value.map(item => item.id);
         setAfiliados({ ...afiliados, [field]: selectedIds });
     };
@@ -136,51 +148,56 @@ export default function DialogPersonal({ Visible, Close, Datos }) {
             <Dialog visible={Visible} onHide={Close} header='Exportar Afiliados'>
                 <div className='flex flex-column'>
                     <strong>Exportar Lista de Afiliados</strong>
-                    <ExportExcel data={Datos}/>
+                    <ExportExcel data={Datos} />
                     <Divider align="center">
                         <strong>Filtros PDF</strong>
                     </Divider>
+
                     <strong>Estados</strong>
-                    <Dropdown 
-                        filter
-                        value={Estados.find(e => e.id === afiliados.estado) || null} 
-                        options={Estados} 
-                        onChange={(e) => handleDropdownChange(e, 'estado')} 
+                    <MultiSelect
+                        value={Estados.filter(e => afiliados.estado.includes(e.id))}
+                        onChange={(e) => handleMultiSelectChange(e, 'estado')}
+                        options={Estados}
                         optionLabel="name"
-                        showClear
-                        placeholder="Selecciona un estado"
-                        style={{padding:'0px'}}
-                    />
-                    <strong>Departamentos</strong>
-                    <MultiSelect 
-                        value={Departamentos.filter(d => afiliados.departamento?.includes(d.id))} 
-                        onChange={(e) => handleMultiSelectChange(e, 'departamento')} 
-                        options={Departamentos} 
-                        optionLabel="name" 
-                        display="chip" 
-                        placeholder="Seleccionar Departamentos" 
-                        maxSelectedLabels={3} 
-                        className="w-full md:w-20rem" 
+                        display="chip"
+                        placeholder="Seleccionar Estados"
+                        maxSelectedLabels={3}
+                        className="w-full md:w-20rem"
                         filter
                     />
+
+                    <strong>Departamentos</strong>
+                    <MultiSelect
+                        value={Departamentos.filter(d => afiliados.departamento.includes(d.id))}
+                        onChange={(e) => handleMultiSelectChange(e, 'departamento')}
+                        options={Departamentos}
+                        optionLabel="name"
+                        display="chip"
+                        placeholder="Seleccionar Departamentos"
+                        maxSelectedLabels={3}
+                        className="w-full md:w-20rem"
+                        filter
+                    />
+
                     <strong>Distritos</strong>
-                    <MultiSelect 
-                        value={distritos.filter(d => afiliados.distrito?.includes(d.id))} 
-                        onChange={(e) => handleMultiSelectChange(e, 'distrito')} 
-                        options={distritos} 
-                        optionLabel="nombre" 
-                        display="chip" 
-                        placeholder="Seleccionar Distritos" 
-                        maxSelectedLabels={3} 
-                        className="w-full md:w-20rem" 
+                    <MultiSelect
+                        value={distritos.filter(d => afiliados.distrito.includes(d.id))}
+                        onChange={(e) => handleMultiSelectChange(e, 'distrito')}
+                        options={distritos}
+                        optionLabel="nombre"
+                        display="chip"
+                        placeholder="Seleccionar Distritos"
+                        maxSelectedLabels={3}
+                        className="w-full md:w-20rem"
                         filter
                     />
                 </div>
-                <Button 
-                label='Exportar PDF'
-                icon="pi pi-file-pdf"
-                style={{ background: '#c77a6b', color: 'black', borderColor: '#c77a6b',width:'100%',margin:'5px' }}
-                onClick={generarPDF}/> 
+                <Button
+                    label='Exportar PDF'
+                    icon="pi pi-file-pdf"
+                    style={{ background: '#c77a6b', color: 'black', borderColor: '#c77a6b', width: '100%', margin: '5px' }}
+                    onClick={generarPDF}
+                />
             </Dialog>
         </div>
     );
