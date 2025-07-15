@@ -51,21 +51,29 @@ const AffiliatesList = ({ affiliates, rowData, setRowData, showDialogPayment, fn
         },
         {
             header: 'F. Último Pago',
-            field: 'ultimaFecha',
-            body: (row) => row.ultimaFecha || '---',
+            field: 'ultimoAño',
+            body: (row) => row.ultimoAño || '---',
         },
         {
             header: 'Deuda',
-            field: 'deuda',
-            body: (row) => (
-                <div className="flex align-items-center">
-                    {row?.estado === "2" ? (
-                        <span className={styles['tag-deuda']}>• Pendiente</span>
-                    ) : (
-                        <span className={styles['tag-libre']}>• Libre</span>
-                    )}
-                </div>
-            ),
+            field: 'estado',
+            body: (row) => {
+                const estado = row.estado || '---';
+                const getClassByEstado = (estado) => {
+                    switch (estado.toLowerCase()) {
+                        case 'libre':
+                            return styles.pagado;
+                        case 'pendiente':
+                            return styles.programado;
+                        case 'deuda':
+                            return styles.deuda;
+                        default:
+                            return styles.defaultEstado;
+                    }
+                };
+
+                return <span className={getClassByEstado(estado)}>{estado}</span>;
+            },
         },
         {
             header: 'Detalle',

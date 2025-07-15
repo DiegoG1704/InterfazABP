@@ -3,7 +3,7 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import React, { useState, useEffect } from 'react';
-import axiosToken from '../Herramientas/AxiosToken';
+import axiosToken, { axiosTokenInstance } from '../Herramientas/AxiosToken';
 import ExportExcel from './ExportExcel';
 import { Divider } from 'primereact/divider';
 import { Dropdown } from 'primereact/dropdown';
@@ -69,73 +69,91 @@ export default function DialogPersonal({ Visible, Close, Datos }) {
         { name: 'Suspendido', id: 3 },
     ];
 
-    const generarPDF = () => {
-        const doc = new jsPDF();
+const generarPDF = async () => {
+    const axiosInstance = axiosToken();
 
-        const datosFiltrados = Datos.filter(item => {
-            const cumpleEstado =
-                afiliados.estado.length === 0 ||
-                afiliados.estado.some(id =>
-                    item.estadoSocio?.toLowerCase() === Estados.find(e => e.id === id)?.name.toLowerCase()
-                );
+    const estadosSeleccionados = Estados
+        .filter(e => afiliados.estado.includes(e.id))
+        .map(e => e.id.toString());
+    const distritosSeleccionados = afiliados.distrito;
+    const departamentosSeleccionados = Departamentos
+        .filter(d => afiliados.departamento.includes(d.id))
+        .map(d => d.name);
 
-            const cumpleDistrito =
-                afiliados.distrito.length === 0 || afiliados.distrito.includes(item.distritoId);
+    const queryParams = new URLSearchParams();
+    if (estadosSeleccionados.length > 0) queryParams.append('estados', estadosSeleccionados.join(','));
+    if (distritosSeleccionados.length > 0) queryParams.append('distritos', distritosSeleccionados.join(','));
+    if (departamentosSeleccionados.length > 0) queryParams.append('departamentos', departamentosSeleccionados.join(','));
 
-            const cumpleDepartamento =
-                afiliados.departamento.length === 0 ||
-                afiliados.departamento.includes(
-                    Departamentos.find(dep => dep.name.toLowerCase() === item.departamento?.toLowerCase())?.id
-                );
-
-            return cumpleEstado && cumpleDistrito && cumpleDepartamento;
-        });
-
+    try {
+        const response = await axiosTokenInstance.get(`informe?${queryParams.toString()}`);
+        const datosFiltrados = response.data;
         const totalAfiliados = datosFiltrados.length;
 
-        doc.setFontSize(14);
-        doc.text("Reporte de Afiliados", 14, 20);
-        doc.setFontSize(12);
-        doc.text(`Total: ${totalAfiliados}`, 180, 20, { align: 'right' });
+        const doc = new jsPDF();
+        const pageWidth = doc.internal.pageSize.getWidth();
 
-        // Agrupar por distrito y contar
+        // Título centrado
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(18);
+        doc.text('REPORTE DE AFILIADOS', pageWidth / 2, 20, { align: 'center' });
+
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        const fecha = new Date().toLocaleDateString();
+        doc.text(`Fecha: ${fecha}`, 14, 30);
+        doc.text(`Total de afiliados: ${totalAfiliados}`, pageWidth - 14, 30, { align: 'right' });
+
+        // Agrupación por distrito
         const conteoPorDistrito = {};
         datosFiltrados.forEach(d => {
             const nombreDistrito = d.distrito || 'Sin distrito';
-            if (!conteoPorDistrito[nombreDistrito]) {
-                conteoPorDistrito[nombreDistrito] = 0;
-            }
-            conteoPorDistrito[nombreDistrito]++;
+            conteoPorDistrito[nombreDistrito] = (conteoPorDistrito[nombreDistrito] || 0) + 1;
         });
 
         const resumenDistrito = Object.entries(conteoPorDistrito)
             .sort(([a], [b]) => a.localeCompare(b))
             .map(([distrito, cantidad]) => [distrito, cantidad]);
 
-        // Tabla de resumen
+        // Tabla con estilo
         autoTable(doc, {
+            startY: 40,
             head: [['Distrito', 'Cantidad de Afiliados']],
             body: resumenDistrito,
-            startY: 30
+            styles: {
+                font: 'helvetica',
+                fontSize: 10,
+                cellPadding: 3,
+                valign: 'middle',
+            },
+            headStyles: {
+                fillColor: [199, 122, 107],
+                textColor: 255,
+                fontSize: 11,
+                fontStyle: 'bold',
+            },
+            alternateRowStyles: {
+                fillColor: [245, 245, 245],
+            },
+            margin: { top: 40, bottom: 20 },
+            didDrawPage: function (data) {
+                // Footer con número de página
+                const pageCount = doc.internal.getNumberOfPages();
+                const pageSize = doc.internal.pageSize;
+                const pageHeight = pageSize.height;
+                doc.setFontSize(10);
+                doc.text(`Página ${data.pageNumber} de ${pageCount}`, pageWidth / 2, pageHeight - 10, {
+                    align: 'center',
+                });
+            }
         });
 
-        // Tabla de detalle
-        const detalleY = doc.lastAutoTable.finalY + 10;
-        autoTable(doc, {
-            head: [['DNI', 'Nombres', 'Apellidos']],
-            body: datosFiltrados.map(d => [d.dni, d.nombre, d.apellido]),
-            startY: detalleY
-        });
+        doc.save(`ReporteAfiliados_${fecha.replace(/\//g, '-')}.pdf`);
+    } catch (error) {
+        console.error('Error al generar el PDF con la API:', error);
+    }
+};
 
-        doc.save('reporte.pdf');
-
-        // Limpiar filtros
-        setAfiliados({
-            estado: [],
-            departamento: [],
-            distrito: []
-        });
-    };
 
     // Cambiar MultiSelect
     const handleMultiSelectChange = (e, field) => {

@@ -142,7 +142,7 @@ const AffiliatesDialog = ({
                 >
                     <TabPanel header="Pagos">
                         <DataTable
-                            value={selectedAffiliatePayment}
+                            value={selectedAffiliatePayment?.pagos}
                             className={styles.dataTable}
                             header={header}
                             paginator
@@ -150,9 +150,10 @@ const AffiliatesDialog = ({
                             paginatorTemplate={paginatorTemplate}
                             paginatorClassName={styles.paginator}
                         >
-                            <Column field="id" header="Item" className={styles.column} />
+                            <Column header="Item" className={styles.column} body={(_, options) => options.rowIndex + 1}/>
                             <Column field="anio" header="Año" className={styles.column} />
                             <Column field="fecha" header="Fecha Pago" className={styles.column} />
+                            <Column field="fechaVenc" header="F. Vencimiento" className={styles.column} />
                             <Column field="estado" header="Estado" body={estadoTemplate} className={styles.column} />
                             <Column
                                 body={(rowData) => {

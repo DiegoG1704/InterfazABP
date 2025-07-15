@@ -170,6 +170,10 @@
   .statValue.active {
     color: #48bb78;
   }
+
+  .statValue.suspended {
+    color: #e53e3e; /* rojo fuerte para estados suspendidos */
+  }
   
   .tabNav {
     display: flex;

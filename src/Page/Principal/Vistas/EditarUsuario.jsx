@@ -289,7 +289,11 @@ const EditTelefono = async (telefonoId) => {
             <div className={styles.profileStats}>
               <div className={styles.stat}>
                 <span className={styles.statLabel}>Estado</span>
-                <span className={`${styles.statValue} ${styles.active}`}>Activo</span>
+                <span
+                  className={`${styles.statValue} ${Number(Datos.estadoSocio) === 3 ? styles.suspended : styles.active}`}
+                >
+                  {Number(Datos.estadoSocio) === 3 ? 'Suspendido' : 'Activo'}
+                </span>
               </div>
               <div className={styles.stat}>
                 <span className={styles.statLabel}>Código</span>

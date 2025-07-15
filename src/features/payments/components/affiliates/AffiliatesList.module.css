@@ -1,15 +1,4 @@
-.tag-deuda{
-    background-color:#fee2e2;
-    color: #f04f4f;
-    display: block;
-    border-radius: 15px;
-    padding: 1px 1px;
-    text-align: center;
-    font-size: 14px;
-    width: 97px;
-
-}
-.tag-libre{
+.pagado {
     background-color:#e7faf2;
     color: #12c447;
     display: block;
@@ -18,7 +7,37 @@
     text-align: center;
     font-size: 14px;
     width: 97px;
- 
-   
+}
 
+.programado {
+    background-color: #c9e0f0;
+    color: #4e76c7;
+    display: block;
+    border-radius: 15px;
+    padding: 1px 1px;
+    text-align: center;
+    font-size: 14px;
+    width: 97px;
+}
+
+.deuda {
+    background-color:#fee2e2;
+    color: #f04f4f;
+    display: block;
+    border-radius: 15px;
+    padding: 1px 1px;
+    text-align: center;
+    font-size: 14px;
+    width: 97px;
+}
+
+.defaultEstado {
+    background-color: #f0f0f0;
+    color: #757575;
+    display: block;
+    border-radius: 15px;
+    padding: 1px 1px;
+    text-align: center;
+    font-size: 14px;
+    width: 97px;
 }
